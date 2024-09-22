@@ -12,7 +12,7 @@
                         Created by mstudio45 (Discord)
 --]]
 
-local getgenvFunc = typeof(getgenv) == "table" and getgenv;
+local getgenvFunc = typeof(getgenv) == "function" and getgenv;
 local global = function() return getgenvFunc and getgenvFunc() or _G end;
 
 if global().mstudio45 and global().mstudio45.ESPLibrary then
