@@ -12,6 +12,13 @@
                         Created by mstudio45 (Discord)
 --]]
 
+local getgenvFunc = typeof(getgenv) == "table" and getgenv;
+local global = function() return getgenvFunc and getgenvFunc() or _G end;
+
+if global().mstudio45 and global().mstudio45.ESPLibrary then
+    return global().mstudio45.ESPLibrary;
+end
+
 local __DEBUG = true;
 local __LOG = true;
 local __PREFIX = "mstudio45's ESP"
@@ -103,8 +110,6 @@ local RunService = getService("RunService");
 local UserInputService = getService("UserInputService");
 
 -- // Variables // --
-local getgenvFunc = typeof(getgenv) == "table" and getgenv;
-local global = function() return getgenvFunc and getgenvFunc() or _G end;
 local DrawingLib = typeof(Drawing) == "table" and Drawing or { noDrawing = true };
 
 local localPlayer = Players.LocalPlayer;
@@ -297,7 +302,7 @@ Library.Folders.Adornments = getFolder("__ADORNMENTS_FOLDER", Library.Folders.Ma
 Library.Folders.Highlights = getFolder("__HIGHLIGHTS_FOLDER", Library.Folders.Main);
 Library.Folders.Outlines = getFolder("__OUTLINES_FOLDER", Library.Folders.Main);
 
-if global().mstudio45 and global().mstudio45.ESPLibrary then
+--[[if global().mstudio45 and global().mstudio45.ESPLibrary then
     local success, errorMessage = pcall(function()
         for key, con in pairs(global().mstudio45.ESPLibrary.Connections.List) do
             global().mstudio45.ESPLibrary.Connections.Remove(key)
@@ -316,7 +321,7 @@ if global().mstudio45 and global().mstudio45.ESPLibrary then
         Library.Debug("Clearing '" .. tostring(name) .. "' folder...")
         uiFolder:ClearAllChildren();
     end
-end
+end--]]
 
 -- // ESP Templates // --
 local Templates = {
@@ -324,7 +329,7 @@ local Templates = {
 		Name = "Instance", 
 		Model = nil,
 		Visible = true,
-        MaxDistance = 1000,
+        MaxDistance = 5000,
 
 		Color = Color3.new(),
 		WasCreatedWithDifferentESP = false
@@ -333,7 +338,7 @@ local Templates = {
 	Tracer = {
 		Model = nil,
 		Visible = true,
-        MaxDistance = 1000,
+        MaxDistance = 5000,
 
 		From = "Bottom", -- // Top, Center, Bottom, Mouse // --
 
@@ -347,7 +352,7 @@ local Templates = {
 		Name = "Instance", 
 		Model = nil,
 		Visible = true,
-        MaxDistance = 1000,
+        MaxDistance = 5000,
 
 		FillColor = Color3.new(),
 		OutlineColor = Color3.new(),
@@ -361,7 +366,7 @@ local Templates = {
 		Name = "Instance", 
 		Model = nil,
 		Visible = true,
-        MaxDistance = 1000,
+        MaxDistance = 5000,
 
 		Color = Color3.new(),
 		TextColor = Color3.new(),
@@ -374,7 +379,7 @@ local Templates = {
 		Name = "Instance", 
 		Model = nil,
 		Visible = true,
-        MaxDistance = 1000,
+        MaxDistance = 5000,
 
 		SurfaceColor = Color3.new(),
 		BorderColor = Color3.new(),
@@ -567,6 +572,8 @@ function Library.ESP.Billboard(args)
 
         if updateVariables ~= false then
             BillboardTable.Settings.Color = _Color;
+
+            BillboardTable.Settings.MaxDistance = typeof(args.MaxDistance) == "number" and args.MaxDistance or BillboardTable.Settings.MaxDistance;
         end
     end;
     BillboardTable.SetColor = BillboardTable.Update;
@@ -683,6 +690,8 @@ function Library.ESP.Tracer(args)
             TracerTable.Settings.Transparency  = _Transparency;
             TracerTable.Settings.From          = _From;
             TracerTable.Settings.Visible       = _Visible;
+
+            TracerTable.Settings.MaxDistance = typeof(args.MaxDistance) == "number" and args.MaxDistance or TracerTable.Settings.MaxDistance;
         end
     end;
     TracerTable.SetColor = TracerTable.Update;
@@ -782,6 +791,8 @@ function Library.ESP.Highlight(args)
             HighlightTable.Settings.FillColor     = _FillColor;
             HighlightTable.Settings.OutlineColor  = _OutlineColor;
             HighlightTable.Settings.TextColor     = _TextColor;
+
+            HighlightTable.Settings.MaxDistance = typeof(args.MaxDistance) == "number" and args.MaxDistance or HighlightTable.Settings.MaxDistance;
         end
     end;
     HighlightTable.SetColor = HighlightTable.Update;
@@ -909,8 +920,10 @@ function Library.ESP.Adornment(args)
         BillboardTable.SetColor(_TextColor, updateVariables);
 
         if updateVariables ~= false then
-            AdornmentTable.Settings.Color     = _Color
-            AdornmentTable.Settings.TextColor = _TextColor
+            AdornmentTable.Settings.Color     = _Color;
+            AdornmentTable.Settings.TextColor = _TextColor;
+
+            AdornmentTable.Settings.MaxDistance = typeof(args.MaxDistance) == "number" and args.MaxDistance or AdornmentTable.Settings.MaxDistance;
         end
     end;
     AdornmentTable.SetColor = AdornmentTable.Update;
@@ -1021,11 +1034,13 @@ function Library.ESP.Outline(args)
         BillboardTable.Update(_TextColor, updateVariables);
 
         if updateVariables ~= false then
-            OutlineTable.Settings.SurfaceColor  = _SurfaceColor
-            OutlineTable.Settings.BorderColor   = _BorderColor
-            OutlineTable.Settings.Thickness     = _Thickness
-            OutlineTable.Settings.Transparency  = _Transparency
-            OutlineTable.Settings.TextColor     = _TextColor
+            OutlineTable.Settings.SurfaceColor  = _SurfaceColor;
+            OutlineTable.Settings.BorderColor   = _BorderColor;
+            OutlineTable.Settings.Thickness     = _Thickness;
+            OutlineTable.Settings.Transparency  = _Transparency;
+            OutlineTable.Settings.TextColor     = _TextColor;
+
+            OutlineTable.Settings.MaxDistance = typeof(args.MaxDistance) == "number" and args.MaxDistance or OutlineTable.Settings.MaxDistance;
         end
     end
     OutlineTable.SetColor = OutlineTable.Update;
