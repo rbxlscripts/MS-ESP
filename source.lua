@@ -12,8 +12,8 @@
                         Created by mstudio45 (Discord)
 --]]
 
-local getgenvFunc = typeof(getgenv) == "function" and getgenv;
-local global = function() return getgenvFunc and getgenvFunc() or _G end;
+--local getgenvFunc = typeof(getgenv) == "function" and getgenv;
+local global = getgenv; -- function() return getgenvFunc and getgenvFunc() or _G; end
 
 if global().mstudio45 and global().mstudio45.ESPLibrary then
     return global().mstudio45.ESPLibrary;
