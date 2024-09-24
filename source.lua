@@ -742,7 +742,7 @@ function Library.ESP.Highlight(args)
     local TableName = "Highlights";
     local TableIndex = #Library.ESP[TableName] + 1;
 
-	local HighlightTable = {
+	local HighlightTable = { 
         TableIndex = TableIndex, TableName = TableName,
 
 		Settings = args,
