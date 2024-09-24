@@ -19,7 +19,7 @@ if global().mstudio45 and global().mstudio45.ESPLibrary then
     return global().mstudio45.ESPLibrary;
 end
 
-local __DEBUG = true;
+local __DEBUG = false;
 local __LOG = true;
 local __PREFIX = "mstudio45's ESP"
 
