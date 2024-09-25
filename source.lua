@@ -543,11 +543,10 @@ function Library.ESP.Billboard(args)
         Library.Connections.Add(args.Model.AncestryChanged:Connect(function(_, parent)
             if not parent then
                 local uiTable = Library.ESP[TableName][TableIndex]
-                if uiTable ~= nil and (typeof(uiTable.Destroy) == "function" then --or typeof(uiTable.Delete) == "function") then
+                if uiTable ~= nil and typeof(uiTable.Destroy) == "function" then --or typeof(uiTable.Delete) == "function") then
                     uiTable.Destroy()
 				end
-                    BillboardTable.Destroy();
-                
+                BillboardTable.Destroy();
             end
         end))
     };
@@ -657,11 +656,10 @@ function Library.ESP.Tracer(args)
         Library.Connections.Add(args.Model.AncestryChanged:Connect(function(_, parent)
             if not parent then
                 local uiTable = Library.ESP[TableName][TableIndex]
-                if uiTable ~= nil and (typeof(uiTable.Destroy) == "function" then -- or typeof(uiTable.Delete) == "function") then
+                if uiTable ~= nil and typeof(uiTable.Destroy) == "function" then -- or typeof(uiTable.Delete) == "function") then
                     uiTable.Destroy()
-						end
-                    TracerTable.Destroy();
-                
+				end
+                TracerTable.Destroy();
             end
         end))
     };
@@ -756,11 +754,10 @@ function Library.ESP.Highlight(args)
         Library.Connections.Add(args.Model.AncestryChanged:Connect(function(_, parent)
             if not parent then
                 local uiTable = Library.ESP[TableName][TableIndex]
-                if uiTable ~= nil and (typeof(uiTable.Destroy) == "function" then -- or typeof(uiTable.Delete) == "function") then
+                if uiTable ~= nil and typeof(uiTable.Destroy) == "function" then -- or typeof(uiTable.Delete) == "function") then
                     uiTable.Destroy()
-						end
-                    HighlightTable.Destroy();
-                
+				end
+                HighlightTable.Destroy();
             end
         end))
     };
@@ -891,11 +888,10 @@ function Library.ESP.Adornment(args)
         Library.Connections.Add(args.Model.AncestryChanged:Connect(function(_, parent)
             if not parent then
                 local uiTable = Library.ESP[TableName][TableIndex]
-                if uiTable ~= nil and (typeof(uiTable.Destroy) == "function" then --or typeof(uiTable.Delete) == "function") then
+                if uiTable ~= nil and typeof(uiTable.Destroy) == "function" then --or typeof(uiTable.Delete) == "function") then
                     uiTable.Destroy()
-									end
-                    AdornmentTable.Destroy();
-                
+				end
+                AdornmentTable.Destroy();
             end
         end))
     };
@@ -1001,10 +997,9 @@ function Library.ESP.Outline(args)
                 local uiTable = Library.ESP[TableName][TableIndex]
                 if uiTable ~= nil and (typeof(uiTable.Destroy) == "function" then -- or typeof(uiTable.Delete) == "function") then
                     uiTable.Destroy()
-									end
-                    OutlineTable.Destroy();
-                
-							end
+				end
+                OutlineTable.Destroy();
+			end
         end))
     };
 
