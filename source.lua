@@ -333,6 +333,7 @@ local Templates = {
 		Model = nil,
 		Visible = true,
         MaxDistance = 5000,
+        StudsOffset = Vector3.new(),
 
 		Color = Color3.new(),
 		WasCreatedWithDifferentESP = false
@@ -342,6 +343,7 @@ local Templates = {
 		Model = nil,
 		Visible = true,
         MaxDistance = 5000,
+        StudsOffset = Vector3.new(),
 
 		From = "Bottom", -- // Top, Center, Bottom, Mouse // --
 
@@ -356,6 +358,7 @@ local Templates = {
 		Model = nil,
 		Visible = true,
         MaxDistance = 5000,
+        StudsOffset = Vector3.new(),
 
 		FillColor = Color3.new(),
 		OutlineColor = Color3.new(),
@@ -370,6 +373,7 @@ local Templates = {
 		Model = nil,
 		Visible = true,
         MaxDistance = 5000,
+        StudsOffset = Vector3.new(),
 
 		Color = Color3.new(),
 		TextColor = Color3.new(),
@@ -383,6 +387,7 @@ local Templates = {
 		Model = nil,
 		Visible = true,
         MaxDistance = 5000,
+        StudsOffset = Vector3.new(),
 
 		SurfaceColor = Color3.new(),
 		BorderColor = Color3.new(),
@@ -462,7 +467,7 @@ function Library.ESP.Billboard(args)
 		AlwaysOnTop = true,
 
 		Size = UDim2.new(0, 200, 0, 50),
-		StudsOffset = Vector3.new(0, 2.5, 0),
+		StudsOffset = args.StudsOffset,
 
 		Adornee = args.Model
 	});
@@ -724,6 +729,7 @@ function Library.ESP.Highlight(args)
 		Name = args.Name, 
 		Model = args.Model,
         MaxDistance = args.MaxDistance,
+        StudsOffset = args.StudsOffset,
 		Color = args.TextColor,
 		WasCreatedWithDifferentESP = true
 	});
@@ -837,6 +843,7 @@ function Library.ESP.Adornment(args)
 		Name = args.Name, 
 		Model = args.Model,
         MaxDistance = args.MaxDistance,
+        StudsOffset = args.StudsOffset,
 		Color = args.TextColor,
 		WasCreatedWithDifferentESP = true
 	});
@@ -965,6 +972,7 @@ function Library.ESP.Outline(args)
 		Name = args.Name, 
 		Model = args.Model,
         MaxDistance = args.MaxDistance,
+        StudsOffset = args.StudsOffset,
 		Color = args.TextColor,
 		WasCreatedWithDifferentESP = true
 	});
