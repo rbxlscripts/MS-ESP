@@ -218,7 +218,7 @@ end
 
 local function createDeleteFunction(TableName, TableIndex, Table)
 	return function()
-		local s, e = pcall(function()
+		--local s, e = pcall(function()
         if typeof(Library.ESP[TableName]) ~= "table" then
 			Library.Warn("Table '" .. TableName .. "' doesn't exists in Library.ESP.");
             return;
@@ -293,8 +293,8 @@ local function createDeleteFunction(TableName, TableIndex, Table)
         if uiTable.TableIndex ~= 0 then Library.ESP[uiTable.TableName][uiTable.TableIndex] = nil; end
 
         Library.Debug("'" .. tostring(uiTable.Settings.Name) .. "' (" .. tostring(TableName) .. ") is now deleted!");
-	    end)
-		if not s then Library.Warn(e) end
+	    --end)
+		--if not s then Library.Warn(e) end
 	end
 end
 
@@ -425,7 +425,7 @@ function Library.ESP.Clear()
 		Library.Debug("Clearing '" .. tostring(_) .. "' ESP...")
 		for _, uiElement in pairs(uiTable) do 
 			if not uiElement then continue; end
-
+            -- task.spawn(function()
 			if typeof(uiElement) == "table" and typeof(uiElement.Destroy) == "function" then 
 				local success, errorMessage = pcall(function()
                     uiElement.Destroy()
@@ -433,10 +433,11 @@ function Library.ESP.Clear()
 
                 if success == false then Library.Warn("Failed to ESP Element.", errorMessage); end;
 			elseif typeof(uiElement) == "Instance" then
-				uiElement:Destroy();
+			    uiElement:Destroy();
 			end
 
-			task.wait();
+			--task.wait();
+			-- end);
 		end
 	end
 
