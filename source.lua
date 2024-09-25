@@ -224,19 +224,19 @@ local function createDeleteFunction(TableName, TableIndex, Table)
             return;
 		end
 
-        local uiTable = Library.ESP[TableName][TableIndex] or Table;
-        local uiTableExists = Library.ESP[TableName][TableIndex] ~= nil;
+        for _, uiTable in pairs({ Library.ESP[TableName][TableIndex], Table }) do
+        --local uiTableExists = Library.ESP[TableName][TableIndex] ~= nil;
         if uiTable == nil then
 			Library.Warn("'???' (" .. tostring(TableName) .. ")' is nil.")
 			return;
 		end
 
         local tracerTable = getTracerTable(uiTable);
-		if uiTable.Deleted == true then
+		--if uiTable.Deleted == true then
 			-- TODO check if its actually deleted
             -- Library.Warn("'" .. tostring(uiTable.Settings.Name) .. "' (" .. tostring(TableName) .. ") was already deleted.")
            -- return;
-		end
+		--end
 
 		Library.Debug("Deleting '" .. tostring(uiTable.Settings.Name) .. "' (" .. tostring(TableName) .. ")...");
 
@@ -262,6 +262,11 @@ local function createDeleteFunction(TableName, TableIndex, Table)
                 uiTable.UIElements[index] = nil;
             end
         end
+
+	-- // Remove Billboard // --
+        if uiTable.BillboardInstance ~= nil and typeof(uiTable.BillboardInstance.Destroy) == "function" then
+           uiTable.BillboardInstance.Destroy()
+	end
 
         -- // Remove Tracer // --
         local successTracer, errorMessageTracer = pcall(function()
@@ -295,7 +300,8 @@ local function createDeleteFunction(TableName, TableIndex, Table)
         if uiTable.TableIndex ~= 0 then Library.ESP[uiTable.TableName][uiTable.TableIndex] = nil; end
 
         Library.Debug("'" .. tostring(uiTable.Settings.Name) .. "' (" .. tostring(TableName) .. ") is now deleted!");
-	    if uiTableExists then delete() end
+	end
+			-- if uiTableExists then delete() end
 		--end)
 		--if not s then Library.Warn(e) end
 	end
@@ -759,7 +765,8 @@ function Library.ESP.Highlight(args)
 
 		Settings = args,
 		UIElements = { Highlight },
-		TracerInstance = args.Tracer.Enabled == true and Library.ESP.Tracer(args.Tracer) or nil
+		TracerInstance = args.Tracer.Enabled == true and Library.ESP.Tracer(args.Tracer) or nil,
+		BillboardInstance = BillboardTable
     }; 
     HighlightTable.Connections = {
         Library.Connections.Add(args.Model.AncestryChanged:Connect(function(_, parent)
@@ -894,7 +901,8 @@ function Library.ESP.Adornment(args)
 
 		Settings = args,
 		UIElements = { Adornment },
-		TracerInstance = args.Tracer.Enabled == true and Library.ESP.Tracer(args.Tracer) or nil
+		TracerInstance = args.Tracer.Enabled == true and Library.ESP.Tracer(args.Tracer) or nil,
+		BillboardInstance = BillboardTable
     };
     AdornmentTable.Connections = {
         Library.Connections.Add(args.Model.AncestryChanged:Connect(function(_, parent)
@@ -1001,7 +1009,8 @@ function Library.ESP.Outline(args)
 
 		Settings = args,
 		UIElements = { Adornment },
-		TracerInstance = args.Tracer.Enabled == true and Library.ESP.Tracer(args.Tracer) or nil
+		TracerInstance = args.Tracer.Enabled == true and Library.ESP.Tracer(args.Tracer) or nil,
+		BillboardInstance = BillboardTable
     };
 
     OutlineTable.Connections = {
