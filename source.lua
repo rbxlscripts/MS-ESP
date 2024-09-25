@@ -426,9 +426,9 @@ function Library.ESP.Clear()
 		for _, uiElement in pairs(uiTable) do 
 			if not uiElement then continue; end
 
-			if typeof(uiElement) == "table" and typeof(uiElement.Delete) == "function" then 
+			if typeof(uiElement) == "table" and typeof(uiElement.Destroy) == "function" then 
 				local success, errorMessage = pcall(function()
-                    uiElement.Delete()
+                    uiElement.Destroy()
                 end);
 
                 if success == false then Library.Warn("Failed to ESP Element.", errorMessage); end;
@@ -624,7 +624,6 @@ function Library.ESP.Tracer(args)
 			-- // Delete Handler // --
 			Deleted = true,
 			Destroy = function() end,
-			Delete = function() end,
 
 			-- // Misc Functions // --
 			Update = function() end,
