@@ -1173,10 +1173,10 @@ Library.Connections.Add(RunService.RenderStepped:Connect(function(dt)
                         tracerTable.TracerInstance.To = Vector2.new(pos.X, pos.Y);
                         tracerTable.Update({ Color = Library.Rainbow.Enabled and Library.Rainbow.Color or tracerTable.Settings.Color }, false);
                     else
-                        if tracerTable.Hidden ~= true then
-                            tracerTable.Hidden = true;
+                       -- if tracerTable.Hidden ~= true then
+                       --     tracerTable.Hidden = true;
                             tracerTable.TracerInstance.Visible = false;
-                        end
+                        --end
                     end
                 else
                     if tracerTable.Deleted ~= true then
