@@ -218,7 +218,7 @@ end
 
 local function createDeleteFunction(TableName, TableIndex, Table)
 	return function()
-		local s, e = pcall(function()
+		--local s, e = pcall(function()
         if typeof(Library.ESP[TableName]) ~= "table" then
 			Library.Warn("Table '" .. TableName .. "' doesn't exists in Library.ESP.");
             return;
@@ -293,8 +293,8 @@ local function createDeleteFunction(TableName, TableIndex, Table)
         if uiTable.TableIndex ~= 0 then Library.ESP[uiTable.TableName][uiTable.TableIndex] = nil; end
 
         Library.Debug("'" .. tostring(uiTable.Settings.Name) .. "' (" .. tostring(TableName) .. ") is now deleted!");
-	    end)
-		if not s then Library.Warn(e) end
+	    --end)
+		--if not s then Library.Warn(e) end
 	end
 end
 
@@ -426,9 +426,9 @@ function Library.ESP.Clear()
 		for _, uiElement in pairs(uiTable) do 
 			if not uiElement then continue; end
 
-			if typeof(uiElement) == "table" and typeof(uiElement.Delete) == "function" then 
+			if typeof(uiElement) == "table" and typeof(uiElement.Destroy) == "function" then 
 				local success, errorMessage = pcall(function()
-                    uiElement.Delete()
+                    uiElement.Destroy()
                 end);
 
                 if success == false then Library.Warn("Failed to ESP Element.", errorMessage); end;
@@ -624,7 +624,6 @@ function Library.ESP.Tracer(args)
 			-- // Delete Handler // --
 			Deleted = true,
 			Destroy = function() end,
-			Delete = function() end,
 
 			-- // Misc Functions // --
 			Update = function() end,
