@@ -218,7 +218,7 @@ end
 
 local function createDeleteFunction(TableName, TableIndex, Table)
 	return function()
-		--local s, e = pcall(function()
+		local s, e = pcall(function()
         if typeof(Library.ESP[TableName]) ~= "table" then
 			Library.Warn("Table '" .. TableName .. "' doesn't exists in Library.ESP.");
             return;
@@ -293,8 +293,8 @@ local function createDeleteFunction(TableName, TableIndex, Table)
         if uiTable.TableIndex ~= 0 then Library.ESP[uiTable.TableName][uiTable.TableIndex] = nil; end
 
         Library.Debug("'" .. tostring(uiTable.Settings.Name) .. "' (" .. tostring(TableName) .. ") is now deleted!");
-	    --end)
-		--if not s then Library.Warn(e) end
+	    end)
+		if not s then Library.Warn(e) end
 	end
 end
 
