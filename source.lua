@@ -995,7 +995,7 @@ function Library.ESP.Outline(args)
         Library.Connections.Add(args.Model.AncestryChanged:Connect(function(_, parent)
             if not parent then
                 local uiTable = Library.ESP[TableName][TableIndex]
-                if uiTable ~= nil and (typeof(uiTable.Destroy) == "function" then -- or typeof(uiTable.Delete) == "function") then
+                if uiTable ~= nil and typeof(uiTable.Destroy) == "function" then -- or typeof(uiTable.Delete) == "function") then
                     uiTable.Destroy()
 				end
                 OutlineTable.Destroy();
