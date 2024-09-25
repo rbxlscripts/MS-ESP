@@ -217,7 +217,7 @@ local function deleteTracer(tracerInstance)
 end
 
 local function createDeleteFunction(TableName, TableIndex, Table)
-	return function()
+	local function delete()
 		--local s, e = pcall(function()
         if typeof(Library.ESP[TableName]) ~= "table" then
 			Library.Warn("Table '" .. TableName .. "' doesn't exists in Library.ESP.");
@@ -225,6 +225,7 @@ local function createDeleteFunction(TableName, TableIndex, Table)
 		end
 
         local uiTable = Library.ESP[TableName][TableIndex] or Table;
+        local uiTableExists = Library.ESP[TableName][TableIndex] ~= nil;
         if uiTable == nil then
 			Library.Warn("'???' (" .. tostring(TableName) .. ")' is nil.")
 			return;
@@ -294,9 +295,12 @@ local function createDeleteFunction(TableName, TableIndex, Table)
         if uiTable.TableIndex ~= 0 then Library.ESP[uiTable.TableName][uiTable.TableIndex] = nil; end
 
         Library.Debug("'" .. tostring(uiTable.Settings.Name) .. "' (" .. tostring(TableName) .. ") is now deleted!");
-	    --end)
+	    if uiTableExists then delete() end
+		--end)
 		--if not s then Library.Warn(e) end
 	end
+
+	return delete;
 end
 
 -- // Setup ESP Info Table // --
