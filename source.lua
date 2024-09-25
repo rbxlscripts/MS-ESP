@@ -218,6 +218,7 @@ end
 
 local function createDeleteFunction(TableName, TableIndex, Table)
 	return function()
+		local s, e = pcall(function()
         if typeof(Library.ESP[TableName]) ~= "table" then
 			Library.Warn("Table '" .. TableName .. "' doesn't exists in Library.ESP.");
             return;
@@ -292,6 +293,8 @@ local function createDeleteFunction(TableName, TableIndex, Table)
         if uiTable.TableIndex ~= 0 then Library.ESP[uiTable.TableName][uiTable.TableIndex] = nil; end
 
         Library.Debug("'" .. tostring(uiTable.Settings.Name) .. "' (" .. tostring(TableName) .. ") is now deleted!");
+	    end)
+		if not s then Library.Warn(e) end
 	end
 end
 
@@ -540,11 +543,11 @@ function Library.ESP.Billboard(args)
         Library.Connections.Add(args.Model.AncestryChanged:Connect(function(_, parent)
             if not parent then
                 local uiTable = Library.ESP[TableName][TableIndex]
-                if uiTable ~= nil and (typeof(uiTable.Destroy) == "function" or typeof(uiTable.Delete) == "function") then
-                    (uiTable.Destroy or uiTable.Delete)()
-                else
+                if uiTable ~= nil and (typeof(uiTable.Destroy) == "function" then --or typeof(uiTable.Delete) == "function") then
+                    uiTable.Destroy()
+				end
                     BillboardTable.Destroy();
-                end
+                
             end
         end))
     };
@@ -552,7 +555,7 @@ function Library.ESP.Billboard(args)
     -- // Delete Handler // --
     BillboardTable.Deleted = false;
     BillboardTable.Destroy = createDeleteFunction(TableName, TableIndex, BillboardTable);
-    BillboardTable.Delete = BillboardTable.Destroy;
+    --BillboardTable.Delete = BillboardTable.Destroy;
 
     BillboardTable.GetDistance = function()
         if BillboardTable.Deleted then return 9e9 end;
@@ -654,11 +657,11 @@ function Library.ESP.Tracer(args)
         Library.Connections.Add(args.Model.AncestryChanged:Connect(function(_, parent)
             if not parent then
                 local uiTable = Library.ESP[TableName][TableIndex]
-                if uiTable ~= nil and (typeof(uiTable.Destroy) == "function" or typeof(uiTable.Delete) == "function") then
-                    (uiTable.Destroy or uiTable.Delete)()
-                else
+                if uiTable ~= nil and (typeof(uiTable.Destroy) == "function" then -- or typeof(uiTable.Delete) == "function") then
+                    uiTable.Destroy()
+						end
                     TracerTable.Destroy();
-                end
+                
             end
         end))
     };
@@ -666,7 +669,7 @@ function Library.ESP.Tracer(args)
     -- // Delete Handler // --
     TracerTable.Deleted = false;
     TracerTable.Destroy = createDeleteFunction(TableName, TableIndex, TracerTable);
-    TracerTable.Delete = TracerTable.Destroy;
+    --TracerTable.Delete = TracerTable.Destroy;
 
     TracerTable.DistancePart = findPrimaryPart(TracerTable.Settings.Model);
     TracerTable.Update = function(args, updateVariables)
@@ -753,11 +756,11 @@ function Library.ESP.Highlight(args)
         Library.Connections.Add(args.Model.AncestryChanged:Connect(function(_, parent)
             if not parent then
                 local uiTable = Library.ESP[TableName][TableIndex]
-                if uiTable ~= nil and (typeof(uiTable.Destroy) == "function" or typeof(uiTable.Delete) == "function") then
-                    (uiTable.Destroy or uiTable.Delete)()
-                else
+                if uiTable ~= nil and (typeof(uiTable.Destroy) == "function" then -- or typeof(uiTable.Delete) == "function") then
+                    uiTable.Destroy()
+						end
                     HighlightTable.Destroy();
-                end
+                
             end
         end))
     };
@@ -765,7 +768,7 @@ function Library.ESP.Highlight(args)
     -- // Delete Handler // --
     HighlightTable.Deleted = false;
     HighlightTable.Destroy = createDeleteFunction(TableName, TableIndex, HighlightTable);
-    HighlightTable.Delete = HighlightTable.Destroy;
+    --HighlightTable.Delete = HighlightTable.Destroy;
 
     HighlightTable.GetDistance = BillboardTable.GetDistance;
 
@@ -888,11 +891,11 @@ function Library.ESP.Adornment(args)
         Library.Connections.Add(args.Model.AncestryChanged:Connect(function(_, parent)
             if not parent then
                 local uiTable = Library.ESP[TableName][TableIndex]
-                if uiTable ~= nil and (typeof(uiTable.Destroy) == "function" or typeof(uiTable.Delete) == "function") then
-                    (uiTable.Destroy or uiTable.Delete)()
-                else
+                if uiTable ~= nil and (typeof(uiTable.Destroy) == "function" then --or typeof(uiTable.Delete) == "function") then
+                    uiTable.Destroy()
+									end
                     AdornmentTable.Destroy();
-                end
+                
             end
         end))
     };
@@ -900,7 +903,7 @@ function Library.ESP.Adornment(args)
     -- // Delete Handler // --
     AdornmentTable.Deleted = false;
     AdornmentTable.Destroy = createDeleteFunction(TableName, TableIndex, AdornmentTable);
-    AdornmentTable.Delete = AdornmentTable.Destroy;
+    --AdornmentTable.Delete = AdornmentTable.Destroy;
 
     AdornmentTable.GetDistance = BillboardTable.GetDistance;
 
@@ -996,19 +999,19 @@ function Library.ESP.Outline(args)
         Library.Connections.Add(args.Model.AncestryChanged:Connect(function(_, parent)
             if not parent then
                 local uiTable = Library.ESP[TableName][TableIndex]
-                if uiTable ~= nil and (typeof(uiTable.Destroy) == "function" or typeof(uiTable.Delete) == "function") then
-                    (uiTable.Destroy or uiTable.Delete)()
-                else
+                if uiTable ~= nil and (typeof(uiTable.Destroy) == "function" then -- or typeof(uiTable.Delete) == "function") then
+                    uiTable.Destroy()
+									end
                     OutlineTable.Destroy();
-                end
-            end
+                
+							end
         end))
     };
 
     -- // Delete Handler // --
     OutlineTable.Deleted = false;
     OutlineTable.Destroy = createDeleteFunction(TableName, TableIndex, OutlineTable);
-    OutlineTable.Delete = OutlineTable.Destroy;
+    --OutlineTable.Delete = OutlineTable.Destroy;
 
     OutlineTable.GetDistance = BillboardTable.GetDistance;
 
