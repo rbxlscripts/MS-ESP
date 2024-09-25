@@ -232,8 +232,9 @@ local function createDeleteFunction(TableName, TableIndex, Table)
 
         local tracerTable = getTracerTable(uiTable);
 		if uiTable.Deleted == true then
-            Library.Warn("'" .. tostring(uiTable.Settings.Name) .. "' (" .. tostring(TableName) .. ") was already deleted.")
-            return;
+			-- TODO check if its actually deleted
+            -- Library.Warn("'" .. tostring(uiTable.Settings.Name) .. "' (" .. tostring(TableName) .. ") was already deleted.")
+           -- return;
 		end
 
 		Library.Debug("Deleting '" .. tostring(uiTable.Settings.Name) .. "' (" .. tostring(TableName) .. ")...");
