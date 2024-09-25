@@ -228,7 +228,7 @@ local function createDeleteFunction(TableName, TableIndex, Table)
         --local uiTableExists = Library.ESP[TableName][TableIndex] ~= nil;
         if uiTable == nil then
 			Library.Warn("'???' (" .. tostring(TableName) .. ")' is nil.")
-			return;
+			continue;
 		end
 
         local tracerTable = getTracerTable(uiTable);
