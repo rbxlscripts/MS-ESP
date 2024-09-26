@@ -201,7 +201,6 @@ end
 
 local function distanceFromCharacter(position, getPositionFromCamera) -- // mspaint.lua (line 1240) // --
     if typeof(position) == "Instance" then position = position:GetPivot().Position; end;
-    if not rootPart and not camera then updateVariables(); end;
 
     if getPositionFromCamera == true and camera then
         return (camera.CFrame.Position - position).Magnitude;
@@ -1096,15 +1095,16 @@ local function checkVisibility(ui, root)
 end
 
 Library.Connections.Add(workspace:GetPropertyChangedSignal("CurrentCamera"):Connect(function()
-    if workspace.CurrentCamera then camera = workspace.CurrentCamera end
-end), "CameraUpdate", true)
+    if workspace.CurrentCamera then camera = workspace.CurrentCamera; end;
+end), "CameraUpdate", true);
+
+Library.Connections.Add(localPlayer.CharacterAdded:Connect(function(newCharacter)
+    character = newCharacter;
+    rootPart = character:WaitForChild("HumanoidRootPart", 5);
+end), "CharacterUpdate", true);
                 
 Library.Connections.Add(RunService.RenderStepped:Connect(function(dt)
-    if not camera then return end
-    if not character and not rootPart then
-        if not character then localPlayer.CharacterAdded:Wait() end
-        updateVariables(); 
-    end;
+    if not (character and rootPart and camera) then return; end;
 
     for uiName, uiTable in pairs(Library.ESP) do
         if typeof(uiTable) ~= "table" then continue; end
