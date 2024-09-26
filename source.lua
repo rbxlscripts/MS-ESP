@@ -481,37 +481,6 @@ function Library.ESP.Billboard(args)
 		Adornee = args.Model
 	});
 
-	local DistanceText = createInstance("TextLabel", {
-        Parent = GUI,
-        Visible = true,
-
-		Name = "Distance",
-		ZIndex = 0,
-		Active = true,
-		ClipsDescendants = true,
-
-		SizeConstraint = Enum.SizeConstraint.RelativeXX,
-		Size = UDim2.new(0, 200, 0, 60),
-
-		Position = UDim2.new(0, 0, 0, 10),
-
-		Font = Enum.Font.RobotoCondensed,
-		FontSize = Enum.FontSize.Size12,
-
-		Text = "[???]",
-		TextColor3 = args.Color,
-		TextStrokeTransparency = 0,
-		TextSize = args.TextSize - 3,
-
-		TextWrapped = true,
-		TextWrap = true,
-		RichText = true,
-
-		BackgroundTransparency = 1,
-		BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-	});
-	createInstance("UIStroke", { Parent = DistanceText });
-
 	local Text = createInstance("TextLabel", {
         Parent = GUI,
         Visible = true,
@@ -547,8 +516,7 @@ function Library.ESP.Billboard(args)
 		Settings = args,
 		UIElements = {
 			GUI, 
-			Text, 
-			DistanceText
+			Text
 		},
 		TracerInstance = nil
     };
@@ -556,7 +524,6 @@ function Library.ESP.Billboard(args)
     BillboardTable.Connections = {
         Library.Connections.Add(args.Model.AncestryChanged:Connect(function(_, parent)
             if not parent then
-                warn("Removing billboard cuz no parent")
                 BillboardTable.Destroy();
             end
         end))
@@ -573,18 +540,19 @@ function Library.ESP.Billboard(args)
         return math.round(distanceFromCharacter(BillboardTable.Settings.Model));
     end;
 
-    BillboardTable.Update = function(color, updateVariables)
-        if BillboardTable.Deleted or (not Text and not DistanceText) then return; end
+    BillboardTable.Update = function(args, updateVariables)
+        if BillboardTable.Deleted or not Text then return; end
+        args = Library.Validate(args, BillboardTable.Settings);
 
-        local _Color = typeof(color) == "Color3" and color or BillboardTable.Settings.Color;
-        for _, text in pairs({ Text, DistanceText }) do
-            if text ~= nil and text.Parent == GUI then 
-                text.TextColor3 = _Color;
-            end
-        end
+        local _Color = typeof(args.Color) == "Color3" and args.Color or BillboardTable.Settings.Color;
+        local _TextSize = typeof(args.TextSize) == "number" and args.TextSize or BillboardTable.Settings.TextSize;
 
+        Text.TextColor3 = _Color;
+        Text.TextSize = _TextSize
+        
         if updateVariables ~= false then
             BillboardTable.Settings.Color = _Color;
+            BillboardTable.Settings.TextSize = _TextSize;
 
             BillboardTable.Settings.MaxDistance = typeof(args.MaxDistance) == "number" and args.MaxDistance or BillboardTable.Settings.MaxDistance;
         end
@@ -598,16 +566,16 @@ function Library.ESP.Billboard(args)
         Text.Text = BillboardTable.Settings.Name;
     end;
     BillboardTable.SetDistanceText = function(distance)
-        if BillboardTable.Deleted or not DistanceText then return; end
+        if BillboardTable.Deleted or not Text then return; end
 
         if typeof(distance) ~= "number" then return end;
-        DistanceText.Text = string.format("[%d]", distance);
+        Text.Text = string.format("%s\n<font size=\"%d\">[%s]</font>", BillboardTable.Settings.Name, BillboardTable.Settings.TextSize - 3, distance)
     end;
 
 	BillboardTable.SetVisible = function(visible)
         if BillboardTable.Deleted or not GUI then return; end
 
-        BillboardTable.Settings.Visible = (typeof(visible) == "boolean" and visible or BillboardTable.Settings.Visible);
+        BillboardTable.Settings.Visible = if typeof(visible) == "boolean" then visible else BillboardTable.Settings.Visible;
         GUI.Enabled = BillboardTable.Settings.Visible;
     end
 
@@ -665,7 +633,6 @@ function Library.ESP.Tracer(args)
     TracerTable.Connections = {
         Library.Connections.Add(args.Model.AncestryChanged:Connect(function(_, parent)
             if not parent then
-                warn("Removing tracer cuz no parent")
                 TracerTable.Destroy();
             end
         end))
@@ -684,7 +651,7 @@ function Library.ESP.Tracer(args)
         local _Color = typeof(args.Color) == "Color3" and args.Color or TracerTable.Settings.Color;
         local _Thickness = typeof(args.Thickness) == "number" and args.Thickness or TracerTable.Settings.Thickness;
         local _Transparency = typeof(args.Transparency) == "number" and args.Transparency or TracerTable.Settings.Transparency;
-        local _From = table.find({ "top", "center", "bottom", "mouse" }, args.From) and args.From or TracerTable.Settings.From;
+        local _From = table.find({ "top", "center", "bottom", "mouse" }, string.lower(args.From)) and string.lower(args.From) or TracerTable.Settings.From;
         local _Visible = typeof(args.Visible) == "boolean" and args.Visible or TracerTable.Settings.Visible;
 
         TracerTable.TracerInstance.Color = _Color;
@@ -762,7 +729,6 @@ function Library.ESP.Highlight(args)
     HighlightTable.Connections = {
         Library.Connections.Add(args.Model.AncestryChanged:Connect(function(_, parent)
             if not parent then
-                warn("Removing hughlight cuz no parent")
                 HighlightTable.Destroy();
             end
         end))
@@ -779,7 +745,7 @@ function Library.ESP.Highlight(args)
         if HighlightTable.Deleted or (not Highlight and not BillboardGui) then return; end
     
         if HighlightTable.TracerInstance ~= nil and typeof(args.Tracer) == "table" then 
-            HighlightTable.TracerInstance.Update(Library.Validate(args.Tracer, HighlightTable.Settings.Tracer), updateVariables); 
+            HighlightTable.TracerInstance.Update(args.Tracer, updateVariables); 
         end;
 
         local settings = HighlightTable.Settings; HighlightTable.Settings.Tracer = nil;
@@ -792,9 +758,11 @@ function Library.ESP.Highlight(args)
         local _FillTransparency = typeof(args.FillTransparency) == "number" and args.FillTransparency or HighlightTable.Settings.FillTransparency;
         local _OutlineTransparency = typeof(args.OutlineTransparency) == "number" and args.OutlineTransparency or HighlightTable.Settings.OutlineTransparency;
 
+        local _TextSize = typeof(args.TextSize) == "number" and args.TextSize or HighlightTable.Settings.TextSize;
+
         Highlight.FillColor = _FillColor;
         Highlight.OutlineColor = _OutlineColor;
-        BillboardTable.Update(_TextColor, updateVariables);
+        BillboardTable.Update({ Color = _TextColor, TextSize = _TextSize }, updateVariables);
 
         Highlight.FillTransparency = _FillTransparency
         Highlight.OutlineTransparency = _OutlineTransparency
@@ -806,6 +774,7 @@ function Library.ESP.Highlight(args)
 
             HighlightTable.Settings.FillTransparency    = _FillTransparency;
             HighlightTable.Settings.OutlineTransparency = _OutlineTransparency;
+            HighlightTable.Settings.TextSize = _TextSize
 
             HighlightTable.Settings.MaxDistance = typeof(args.MaxDistance) == "number" and args.MaxDistance or HighlightTable.Settings.MaxDistance;
         end
@@ -823,7 +792,7 @@ function Library.ESP.Highlight(args)
     HighlightTable.SetVisible = function(visible, tracer)
         if HighlightTable.Deleted or not Highlight then return; end
 
-        HighlightTable.Settings.Visible = (typeof(visible) == "boolean" and visible or HighlightTable.Settings.Visible);
+        HighlightTable.Settings.Visible = if typeof(visible) == "boolean" then visible else HighlightTable.Settings.Visible;
         Highlight.Enabled = HighlightTable.Settings.Visible;
         if tracer ~= false and HighlightTable.TracerInstance ~= nil then HighlightTable.TracerInstance.SetVisible(HighlightTable.Settings.Visible); end;
     end;
@@ -904,7 +873,6 @@ function Library.ESP.Adornment(args)
     AdornmentTable.Connections = {
         Library.Connections.Add(args.Model.AncestryChanged:Connect(function(_, parent)
             if not parent then
-                warn("Removing adornment cuz no parent")
                 AdornmentTable.Destroy();
             end
         end))
@@ -921,7 +889,7 @@ function Library.ESP.Adornment(args)
         if AdornmentTable.Deleted or (not Adornment and not BillboardGui) then return; end
 
         if AdornmentTable.TracerInstance ~= nil and typeof(args.Tracer) == "table" then 
-            AdornmentTable.TracerInstance.Update(Library.Validate(args.Tracer, AdornmentTable.Settings.Tracer), updateVariables); 
+            AdornmentTable.TracerInstance.Update(args.Tracer, updateVariables); 
         end;
         local settings = AdornmentTable.Settings; AdornmentTable.Settings.Tracer = nil;
         args = Library.Validate(args, settings);
@@ -929,8 +897,10 @@ function Library.ESP.Adornment(args)
         local _Color = typeof(args.Color) == "Color3" and args.Color or AdornmentTable.Settings.Color;
         local _TextColor = typeof(args.TextColor) == "Color3" and args.TextColor or AdornmentTable.Settings.TextColor;
 
+        local _TextSize = typeof(args.TextSize) == "number" and args.TextSize or HighlightTable.Settings.TextSize;
+
         Adornment.Color3 = _Color;
-        BillboardTable.SetColor(_TextColor, updateVariables);
+        BillboardTable.Update({ Color = _TextColor, TextSize = _TextSize }, updateVariables);
 
         if updateVariables ~= false then
             AdornmentTable.Settings.Color     = _Color;
@@ -952,7 +922,7 @@ function Library.ESP.Adornment(args)
 	AdornmentTable.SetVisible = function(visible, tracer)
         if AdornmentTable.Deleted or not Adornment then return; end
 
-        AdornmentTable.Settings.Visible = (typeof(visible) == "boolean" and visible or AdornmentTable.Settings.Visible);
+        AdornmentTable.Settings.Visible = if typeof(visible) == "boolean" then visible else AdornmentTable.Settings.Visible;
         Adornment.Adornee = AdornmentTable.Settings.Visible and AdornmentTable.Settings.Model or nil;
         if tracer ~= false and AdornmentTable.TracerInstance ~= nil then AdornmentTable.TracerInstance.SetVisible(AdornmentTable.Settings.Visible); end;
     end
@@ -1010,7 +980,6 @@ function Library.ESP.Outline(args)
     OutlineTable.Connections = {
         Library.Connections.Add(args.Model.AncestryChanged:Connect(function(_, parent)
             if not parent then
-                warn("Removing outline cuz no parent")
                 OutlineTable.Destroy();
 			end
         end))
@@ -1027,7 +996,7 @@ function Library.ESP.Outline(args)
         if OutlineTable.Deleted or (not Outline and not BillboardGui) then return; end
 
         if OutlineTable.TracerInstance ~= nil and typeof(args.Tracer) == "table" then 
-            OutlineTable.TracerInstance.Update(Library.Validate(args.Tracer, OutlineTable.Settings.Tracer), updateVariables); 
+            OutlineTable.TracerInstance.Update(args.Tracer, updateVariables); 
         end;
         local settings = OutlineTable.Settings; OutlineTable.Settings.Tracer = nil;
         args = Library.Validate(args, settings);
@@ -1067,7 +1036,7 @@ function Library.ESP.Outline(args)
     OutlineTable.SetVisible = function(visible, tracer)
         if OutlineTable.Deleted or not Highlight then return; end
 
-        OutlineTable.Settings.Visible = (typeof(visible) == "boolean" and visible or OutlineTable.Settings.Visible);
+        OutlineTable.Settings.Visible = if typeof(visible) == "boolean" then visible else OutlineTable.Settings.Visible;
         Outline.Adornee = OutlineTable.Settings.Visible and OutlineTable.Settings.Model or nil;
         if tracer ~= false and OutlineTable.TracerInstance ~= nil then OutlineTable.TracerInstance.SetVisible(OutlineTable.Settings.Visible); end;
     end
@@ -1150,13 +1119,10 @@ Library.Connections.Add(RunService.RenderStepped:Connect(function(dt)
                         if tracerTable.Settings.From == "mouse" then
                             local mousePos = UserInputService:GetMouseLocation();
                             tracerTable.TracerInstance.From = Vector2.new(mousePos.X, mousePos.Y);
-
                         elseif tracerTable.Settings.From == "top" then
                             tracerTable.TracerInstance.From = Vector2.new(camera.ViewportSize.X / 2, 0);
-
                         elseif tracerTable.Settings.From == "center" then
                             tracerTable.TracerInstance.From = Vector2.new(camera.ViewportSize.X / 2, camera.ViewportSize.Y / 2);
-
                         else
                             tracerTable.TracerInstance.From = Vector2.new(camera.ViewportSize.X / 2, camera.ViewportSize.Y);
                         end
