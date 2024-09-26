@@ -789,14 +789,23 @@ function Library.ESP.Highlight(args)
         local _OutlineColor = typeof(args.OutlineColor) == "Color3" and args.OutlineColor or HighlightTable.Settings.OutlineColor;
         local _TextColor = typeof(args.TextColor) == "Color3" and args.TextColor or HighlightTable.Settings.TextColor;
 
+        local _FillTransparency = typeof(args.FillTransparency) == "number" and args.FillTransparency or HighlightTable.Settings.FillTransparency;
+        local _OutlineTransparency = typeof(args.OutlineTransparency) == "number" and args.OutlineTransparency or HighlightTable.Settings.OutlineTransparency;
+
         Highlight.FillColor = _FillColor;
         Highlight.OutlineColor = _OutlineColor;
         BillboardTable.Update(_TextColor, updateVariables);
 
+        Highlight.FillTransparency = _FillTransparency
+        Highlight.OutlineTransparency = _OutlineTransparency
+
         if updateVariables ~= false then
-            HighlightTable.Settings.FillColor     = _FillColor;
-            HighlightTable.Settings.OutlineColor  = _OutlineColor;
-            HighlightTable.Settings.TextColor     = _TextColor;
+            HighlightTable.Settings.FillColor           = _FillColor;
+            HighlightTable.Settings.OutlineColor        = _OutlineColor;
+            HighlightTable.Settings.TextColor           = _TextColor;
+
+            HighlightTable.Settings.FillTransparency    = _FillTransparency;
+            HighlightTable.Settings.OutlineTransparency = _OutlineTransparency;
 
             HighlightTable.Settings.MaxDistance = typeof(args.MaxDistance) == "number" and args.MaxDistance or HighlightTable.Settings.MaxDistance;
         end
