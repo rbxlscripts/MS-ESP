@@ -29,31 +29,31 @@ local Library = {
         if __LOG ~= true then return end; 
         print("[💭 INFO] " .. __PREFIX .. ":", ...);
     end,
-	Warn = function(...)
+    Warn = function(...)
         if __LOG ~= true then return end; 
         warn("[⚠ WARN] " .. __PREFIX .. ":", ...);
     end,
-	Error = function(...)
+    Error = function(...)
         if __LOG ~= true then return end; 
         error("[🆘 ERROR] " .. __PREFIX .. ":", ...);
     end,
-	Debug = function(...) 
+    Debug = function(...) 
         if __DEBUG ~= true or __LOG ~= true then return end; 
         print("[🛠 DEBUG] " .. __PREFIX .. ":", ...);
     end,
 
-	SetDebugEnabled     = function(bool) __DEBUG = bool end,
+    SetDebugEnabled     = function(bool) __DEBUG = bool end,
     SetIsLoggingEnabled = function(bool) __LOG = bool end,
     SetPrefix           = function(pref) __PREFIX = tostring(pref) end,
 
     -- // Storage // --
     ESP = {
-		Billboards = {},
-		Adornments = {},
-		Highlights = {},
-		Outlines = {},
-		Tracers = {}
-	},
+        Billboards = {},
+        Adornments = {},
+        Highlights = {},
+        Outlines = {},
+        Tracers = {}
+    },
 
     Folders = {}
 };
@@ -132,79 +132,79 @@ local camera;
 local worldToViewport;
 
 local function updateVariables()
-	Library.Debug("Updating variables...")
-	localPlayer = Players.LocalPlayer;
+    Library.Debug("Updating variables...")
+    localPlayer = Players.LocalPlayer;
 
-	character = character or (localPlayer.Character or localPlayer.CharacterAdded:Wait());
-	rootPart = rootPart or (character and (character:FindFirstChild("HumanoidRootPart") or character.PrimaryPart or character:FindFirstChildWhichIsA("BasePart")) or nil);
+    character = character or (localPlayer.Character or localPlayer.CharacterAdded:Wait());
+    rootPart = rootPart or (character and (character:FindFirstChild("HumanoidRootPart") or character.PrimaryPart or character:FindFirstChildWhichIsA("BasePart")) or nil);
 
-	camera = camera or workspace.CurrentCamera;
-	worldToViewport = function(...) camera = (camera or workspace.CurrentCamera); return camera:WorldToViewportPoint(...) end;
-	Library.Debug("Variables updated!")
+    camera = camera or workspace.CurrentCamera;
+    worldToViewport = function(...) camera = (camera or workspace.CurrentCamera); return camera:WorldToViewportPoint(...) end;
+    Library.Debug("Variables updated!")
 end
 updateVariables();
 
 -- // Functions // --
 local function getFolder(name, parent)
-	assert(typeof(name) == "string", "Argument #1 must be a string.");
-	assert(typeof(parent) == "Instance", "Argument #2 must be an Instance.");
+    assert(typeof(name) == "string", "Argument #1 must be a string.");
+    assert(typeof(parent) == "Instance", "Argument #2 must be an Instance.");
 
     Library.Debug("Creating folder '" .. name .. "'.")
-	local folder = parent:FindFirstChild(name);
-	if folder == nil then
-		folder = Instance.new("Folder", parent);
-		folder.Name = name;
-	end
-	return folder;
+    local folder = parent:FindFirstChild(name);
+    if folder == nil then
+        folder = Instance.new("Folder", parent);
+        folder.Name = name;
+    end
+    return folder;
 end
 
 local function randomString()
-	local length = math.random(10,20)
-	local array = {}
-	for i = 1, length do
-		array[i] = string.char(math.random(32, 126))
-	end
-	return table.concat(array)
+    local length = math.random(10,20)
+    local array = {}
+    for i = 1, length do
+        array[i] = string.char(math.random(32, 126))
+    end
+    return table.concat(array)
 end
 
 local function hasProperty(instance, property) -- // Finds a property using a pcall call and then returns the value of it // --
-	assert(typeof(instance) == "Instance", "Argument #1 must be an Instance.");
-	assert(typeof(property) == "string", "Argument #2 must be a string.");
+    assert(typeof(instance) == "Instance", "Argument #1 must be an Instance.");
+    assert(typeof(property) == "string", "Argument #2 must be a string.");
 
-	local clone = instance;
-	local success, property = pcall(function() return clone[property] end);
-	return success and property or nil;
+    local clone = instance;
+    local success, property = pcall(function() return clone[property] end);
+    return success and property or nil;
 end
 
 local function findPrimaryPart(inst)
-	if inst == nil or typeof(inst) ~= "Instance" then return nil end;
+    if inst == nil or typeof(inst) ~= "Instance" then return nil end;
     return (inst:IsA("Model") and inst.PrimaryPart or nil) or inst:FindFirstChildWhichIsA("BasePart") or inst:FindFirstChildWhichIsA("UnionOperation") or inst;
 end
 
 local function createInstance(instanceType, properties)
-	assert(typeof(instanceType) == "string", "Argument #1 must be a string.");
-	assert(typeof(properties) == "table", "Argument #2 must be a table.");
+    assert(typeof(instanceType) == "string", "Argument #1 must be a string.");
+    assert(typeof(properties) == "table", "Argument #2 must be a table.");
 
-	local success, instance = pcall(function() return Instance.new(instanceType) end);
-	assert(success, "Failed to create the instance.");
+    local success, instance = pcall(function() return Instance.new(instanceType) end);
+    assert(success, "Failed to create the instance.");
 
-	for propertyName, propertyValue in pairs(properties) do
-		local success, errorMessage = pcall(function()
-			instance[propertyName] = propertyValue;
-		end)
+    for propertyName, propertyValue in pairs(properties) do
+        local success, errorMessage = pcall(function()
+            instance[propertyName] = propertyValue;
+        end)
 
-		if not success then Library.Warn("Failed to set '" .. propertyName .. "' property.", errorMessage) end;
-	end
+        if not success then Library.Warn("Failed to set '" .. propertyName .. "' property.", errorMessage) end;
+    end
 
-	return instance;
+    return instance;
 end
 
 local function distanceFromCharacter(position, getPositionFromCamera) -- // mspaint.lua (line 1240) // --
     if typeof(position) == "Instance" then position = position:GetPivot().Position; end;
-	if not rootPart and not camera then updateVariables(); end;
+    if not rootPart and not camera then updateVariables(); end;
 
     if getPositionFromCamera == true and camera then
-		return (camera.CFrame.Position - position).Magnitude;
+        return (camera.CFrame.Position - position).Magnitude;
     end
 
     if rootPart then
@@ -239,11 +239,11 @@ local function deleteTracer(tracerInstance)
 end
 
 local function createDeleteFunction(TableName, TableIndex, Table)
-	local function delete()
+    local function delete()
         if typeof(Library.ESP[TableName]) ~= "table" then
-			Library.Warn("Table '" .. TableName .. "' doesn't exists in Library.ESP.");
+            Library.Warn("Table '" .. TableName .. "' doesn't exists in Library.ESP.");
             return;
-		end
+        end
 
         for _, uiTable in pairs({ Library.ESP[TableName][TableIndex], Table }) do
             if uiTable == nil then
@@ -320,13 +320,13 @@ local function createDeleteFunction(TableName, TableIndex, Table)
 
         Library.Debug("----------")
         Library.Debug("Finished all system of deleting [", TableName, "]")
-	end
+    end
 
-	return delete;
+    return delete;
 end
 
 -- // Setup ESP Info Table // --
-Library.Folders.Main = getFolder("__ESP_FOLDER", localPlayer:WaitForChild("PlayerGui", math.huge))-- CoreGui);
+Library.Folders.Main = getFolder("__ESP_FOLDER", CoreGui);
 Library.Folders.Billboards = getFolder("__BILLBOARDS_FOLDER", Library.Folders.Main);
 Library.Folders.Adornments = getFolder("__ADORNMENTS_FOLDER", Library.Folders.Main);
 Library.Folders.Highlights = getFolder("__HIGHLIGHTS_FOLDER", Library.Folders.Main);
@@ -334,120 +334,120 @@ Library.Folders.Outlines = getFolder("__OUTLINES_FOLDER", Library.Folders.Main);
 
 -- // ESP Templates // --
 local Templates = {
-	Billboard = {
-		Name = "Instance", 
-		Model = nil,
-		Visible = true,
+    Billboard = {
+        Name = "Instance", 
+        Model = nil,
+        Visible = true,
         MaxDistance = 5000,
         StudsOffset = Vector3.new(),
         TextSize = 16,
 
-		Color = Color3.new(),
-		WasCreatedWithDifferentESP = false
-	},
+        Color = Color3.new(),
+        WasCreatedWithDifferentESP = false
+    },
 
-	Tracer = {
-		Model = nil,
-		Visible = true,
+    Tracer = {
+        Model = nil,
+        Visible = true,
         MaxDistance = 5000,
         StudsOffset = Vector3.new(),
         TextSize = 16,
 
-		From = "Bottom", -- // Top, Center, Bottom, Mouse // --
+        From = "Bottom", -- // Top, Center, Bottom, Mouse // --
 
-		Color = Color3.new(),
+        Color = Color3.new(),
 
-		Thickness = 2,
-		Transparency = 0.65,
-	},
+        Thickness = 2,
+        Transparency = 0.65,
+    },
 
-	Highlight = {
-		Name = "Instance", 
-		Model = nil,
-		Visible = true,
+    Highlight = {
+        Name = "Instance", 
+        Model = nil,
+        Visible = true,
         MaxDistance = 5000,
         StudsOffset = Vector3.new(),
         TextSize = 16,
 
-		FillColor = Color3.new(),
-		OutlineColor = Color3.new(),
-		TextColor = Color3.new(),
+        FillColor = Color3.new(),
+        OutlineColor = Color3.new(),
+        TextColor = Color3.new(),
 
-		FillTransparency = 0.65,
-		OutlineTransparency = 0
-	},
+        FillTransparency = 0.65,
+        OutlineTransparency = 0
+    },
 
-	Adornment = {
-		Name = "Instance", 
-		Model = nil,
-		Visible = true,
+    Adornment = {
+        Name = "Instance", 
+        Model = nil,
+        Visible = true,
         MaxDistance = 5000,
         StudsOffset = Vector3.new(),
         TextSize = 16,
 
-		Color = Color3.new(),
-		TextColor = Color3.new(),
+        Color = Color3.new(),
+        TextColor = Color3.new(),
 
-		Transparency = 0.65,
-		Type = "Box" -- // Box, Cylinder, Sphere // --
-	},
+        Transparency = 0.65,
+        Type = "Box" -- // Box, Cylinder, Sphere // --
+    },
 
-	Outline = {
-		Name = "Instance", 
-		Model = nil,
-		Visible = true,
+    Outline = {
+        Name = "Instance", 
+        Model = nil,
+        Visible = true,
         MaxDistance = 5000,
         StudsOffset = Vector3.new(),
         TextSize = 16,
 
-		SurfaceColor = Color3.new(),
-		BorderColor = Color3.new(),
-		TextColor = Color3.new(),
+        SurfaceColor = Color3.new(),
+        BorderColor = Color3.new(),
+        TextColor = Color3.new(),
 
-		Thickness = 0.04, -- 2
-		Transparency = 0.65
-	}
+        Thickness = 0.04, -- 2
+        Transparency = 0.65
+    }
 }
 
 -- // Library Handler // --
 function Library.Validate(args, template)
     -- // Adds missing values depending on the 'template' argument // --
-	args = type(args) == "table" and args or {}
+    args = type(args) == "table" and args or {}
 
-	for key, value in pairs(template) do
-		local argValue = args[key]
+    for key, value in pairs(template) do
+        local argValue = args[key]
 
-		if argValue == nil or type(argValue) ~= type(value) then
-			args[key] = value
-		elseif type(value) == "table" then
-			args[key] = Library.Validate(argValue, value)
-		end
-	end
+        if argValue == nil or type(argValue) ~= type(value) then
+            args[key] = value
+        elseif type(value) == "table" then
+            args[key] = Library.Validate(argValue, value)
+        end
+    end
 
-	return args
+    return args
 end
 
 function Library.ESP.Clear()
     Library.Debug("---------------------------");
 
-	for _, uiTable in pairs(Library.ESP) do
+    for _, uiTable in pairs(Library.ESP) do
         if typeof(uiTable) ~= "table" then continue; end
 
-		Library.Debug("Clearing '" .. tostring(_) .. "' ESP...")
-		for _, uiElement in pairs(uiTable) do 
-			if not uiElement then continue; end
+        Library.Debug("Clearing '" .. tostring(_) .. "' ESP...")
+        for _, uiElement in pairs(uiTable) do 
+            if not uiElement then continue; end
             -- task.spawn(function()
-			if typeof(uiElement) == "table" and typeof(uiElement.Destroy) == "function" then 
-				local success, errorMessage = pcall(function()
+            if typeof(uiElement) == "table" and typeof(uiElement.Destroy) == "function" then 
+                local success, errorMessage = pcall(function()
                     uiElement.Destroy()
                 end);
 
                 if success == false then Library.Warn("Failed to ESP Element.", errorMessage); end;
-			elseif typeof(uiElement) == "Instance" then
-			    uiElement:Destroy();
-			end
-		end
-	end
+            elseif typeof(uiElement) == "Instance" then
+                uiElement:Destroy();
+            end
+        end
+    end
 
     for name, uiFolder in pairs(Library.Folders) do
         if name == "Main" then continue; end
@@ -461,64 +461,64 @@ end
 
 -- // ESP Handler // --
 function Library.ESP.Billboard(args)
-	assert(typeof(args) == "table", "args must be a table.");
-	args = Library.Validate(args, Templates.Billboard);
+    assert(typeof(args) == "table", "args must be a table.");
+    args = Library.Validate(args, Templates.Billboard);
     assert(typeof(args.Model) == "Instance", "args.Model must be an Instance.");
 
-	Library.Debug("Creating Billboard '" .. tostring(args.Name) .. "'...")
-	-- // Instances // --
-	local GUI = createInstance("BillboardGui", {
-		Name = "GUI_" .. args.Name,
-		Parent = Library.Folders.Billboards,
+    Library.Debug("Creating Billboard '" .. tostring(args.Name) .. "'...")
+    -- // Instances // --
+    local GUI = createInstance("BillboardGui", {
+        Name = "GUI_" .. args.Name,
+        Parent = Library.Folders.Billboards,
 
-		ResetOnSpawn = false,
-		Enabled = true,
-		AlwaysOnTop = true,
+        ResetOnSpawn = false,
+        Enabled = true,
+        AlwaysOnTop = true,
 
-		Size = UDim2.new(0, 200, 0, 50),
-		StudsOffset = args.StudsOffset,
+        Size = UDim2.new(0, 200, 0, 50),
+        StudsOffset = args.StudsOffset,
 
-		Adornee = args.Model
-	});
+        Adornee = args.Model
+    });
 
-	local Text = createInstance("TextLabel", {
+    local Text = createInstance("TextLabel", {
         Parent = GUI,
         Visible = true,
 
-		Name = "Text",
-		ZIndex = 0,
+        Name = "Text",
+        ZIndex = 0,
 
-		Size = UDim2.new(0, 200, 0, 50),
+        Size = UDim2.new(0, 200, 0, 50),
 
-		FontSize = Enum.FontSize.Size18,
-		Font = Enum.Font.RobotoCondensed,
+        FontSize = Enum.FontSize.Size18,
+        Font = Enum.Font.RobotoCondensed,
 
-		Text = args.Name,
-		TextColor3 = args.Color,
-		TextStrokeTransparency = 0,
-		TextSize = args.TextSize,
+        Text = args.Name,
+        TextColor3 = args.Color,
+        TextStrokeTransparency = 0,
+        TextSize = args.TextSize,
 
-		TextWrapped = true,
-		TextWrap = true,
-		RichText = true,
+        TextWrapped = true,
+        TextWrap = true,
+        RichText = true,
 
-		BackgroundTransparency = 1,
-		BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-	});
-	createInstance("UIStroke", { Parent = Text });
+        BackgroundTransparency = 1,
+        BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+    });
+    createInstance("UIStroke", { Parent = Text });
 
     local TableName = "Billboards";
     local TableIndex = randomString();
 
-	local BillboardTable = {
+    local BillboardTable = {
         TableIndex = TableIndex, TableName = TableName,
 
-		Settings = args,
-		UIElements = {
-			GUI, 
-			Text
-		},
-		TracerInstance = nil
+        Settings = args,
+        UIElements = {
+            GUI, 
+            Text
+        },
+        TracerInstance = nil
     };
 
     BillboardTable.Connections = {
@@ -572,7 +572,7 @@ function Library.ESP.Billboard(args)
         Text.Text = string.format("%s\n<font size=\"%d\">[%s]</font>", BillboardTable.Settings.Name, BillboardTable.Settings.TextSize - 3, distance)
     end;
 
-	BillboardTable.SetVisible = function(visible)
+    BillboardTable.SetVisible = function(visible)
         if BillboardTable.Deleted or not GUI then return; end
 
         BillboardTable.Settings.Visible = if typeof(visible) == "boolean" then visible else BillboardTable.Settings.Visible;
@@ -580,53 +580,53 @@ function Library.ESP.Billboard(args)
     end
 
     -- // Return // --
-	Library.ESP[TableName][TableIndex] = BillboardTable;
-	return BillboardTable;
+    Library.ESP[TableName][TableIndex] = BillboardTable;
+    return BillboardTable;
 end
 
 function Library.ESP.Tracer(args)
-	if DrawingLib.noDrawing == true then
-		return {
-			TableIndex = 0, TableName = "Tracers",
+    if DrawingLib.noDrawing == true then
+        return {
+            TableIndex = 0, TableName = "Tracers",
 
-			Settings = {},
-			UIElements = {},
+            Settings = {},
+            UIElements = {},
             TracerInstance = nil,
             IsNormalTracer = true,
-			DistancePart = nil,
+            DistancePart = nil,
 
-			-- // Delete Handler // --
-			Deleted = true,
-			Destroy = function() end,
+            -- // Delete Handler // --
+            Deleted = true,
+            Destroy = function() end,
 
-			-- // Misc Functions // --
-			Update = function() end,
-			SetColor = function() end,
-			SetVisible = function() end
-		}
-	end
+            -- // Misc Functions // --
+            Update = function() end,
+            SetColor = function() end,
+            SetVisible = function() end
+        }
+    end
 
     assert(typeof(args) == "table", "args must be a table.");
-	args = Library.Validate(args, Templates.Tracer);
-	assert(typeof(args.Model) == "Instance", "args.Model must be an Instance.");
-	args.From = string.lower(args.From);
+    args = Library.Validate(args, Templates.Tracer);
+    assert(typeof(args.Model) == "Instance", "args.Model must be an Instance.");
+    args.From = string.lower(args.From);
 
-	Library.Debug("Creating Tracer...")
+    Library.Debug("Creating Tracer...")
     -- // Create Tracer // --
-	local TracerInstance = DrawingLib.new("Line")
-	TracerInstance.Visible = args.Visible;
-	TracerInstance.Color = args.Color;
-	TracerInstance.Thickness = args.Thickness;
-	TracerInstance.Transparency = args.Transparency;
+    local TracerInstance = DrawingLib.new("Line")
+    TracerInstance.Visible = args.Visible;
+    TracerInstance.Color = args.Color;
+    TracerInstance.Thickness = args.Thickness;
+    TracerInstance.Transparency = args.Transparency;
 
     local TableName = "Tracers";
-	local TableIndex = randomString();
+    local TableIndex = randomString();
 
-	local TracerTable = {
+    local TracerTable = {
         TableIndex = TableIndex, TableName = TableName,
 
-		Settings = args,
-		TracerInstance = TracerInstance,
+        Settings = args,
+        TracerInstance = TracerInstance,
         IsNormalTracer = true
     }; 
 
@@ -671,19 +671,19 @@ function Library.ESP.Tracer(args)
     end;
     TracerTable.SetColor = TracerTable.Update;
 
-	TracerTable.SetVisible = function(visible)
+    TracerTable.SetVisible = function(visible)
         if TracerTable.Deleted or not TracerTable.TracerInstance then return; end
         TracerTable.Update({ Visible = visible })
     end
 
     -- // Return // --
     Library.ESP[TableName][TableIndex] = TracerTable;
-	return TracerTable;
+    return TracerTable;
 end
 
 function Library.ESP.Highlight(args)
-	assert(typeof(args) == "table", "args must be a table.");
-	args = Library.Validate(args, Templates.Highlight)
+    assert(typeof(args) == "table", "args must be a table.");
+    args = Library.Validate(args, Templates.Highlight)
     
     -- // Tracer // --
     do 
@@ -693,38 +693,38 @@ function Library.ESP.Highlight(args)
     end
     assert(typeof(args.Model) == "Instance", "args.Model must be an Instance.");
 
-	Library.Debug("Creating Highlight '" .. tostring(args.Name) .. "'...")
-	local BillboardTable = Library.ESP.Billboard({
-		Name = args.Name, 
-		Model = args.Model,
+    Library.Debug("Creating Highlight '" .. tostring(args.Name) .. "'...")
+    local BillboardTable = Library.ESP.Billboard({
+        Name = args.Name, 
+        Model = args.Model,
         MaxDistance = args.MaxDistance,
         StudsOffset = args.StudsOffset,
-		Color = args.TextColor,
-		WasCreatedWithDifferentESP = true
-	});
+        Color = args.TextColor,
+        WasCreatedWithDifferentESP = true
+    });
 
-	local Highlight = createInstance("Highlight", {
-		Parent = Library.Folders.Highlights,
+    local Highlight = createInstance("Highlight", {
+        Parent = Library.Folders.Highlights,
 
-		FillColor = args.FillColor,
-		OutlineColor = args.OutlineColor,
+        FillColor = args.FillColor,
+        OutlineColor = args.OutlineColor,
 
-		FillTransparency = args.FillTransparency,
-		OutlineTransparency = args.OutlineTransparency,
+        FillTransparency = args.FillTransparency,
+        OutlineTransparency = args.OutlineTransparency,
 
-		Adornee = args.Model
-	});
+        Adornee = args.Model
+    });
 
     local TableName = "Highlights";
     local TableIndex = randomString();
 
-	local HighlightTable = { 
+    local HighlightTable = { 
         TableIndex = TableIndex, TableName = TableName,
 
-		Settings = args,
-		UIElements = { Highlight },
-		TracerInstance = args.Tracer.Enabled == true and Library.ESP.Tracer(args.Tracer) or nil,
-		BillboardInstance = BillboardTable
+        Settings = args,
+        UIElements = { Highlight },
+        TracerInstance = args.Tracer.Enabled == true and Library.ESP.Tracer(args.Tracer) or nil,
+        BillboardInstance = BillboardTable
     }; 
     HighlightTable.Connections = {
         Library.Connections.Add(args.Model.AncestryChanged:Connect(function(_, parent)
@@ -798,13 +798,13 @@ function Library.ESP.Highlight(args)
     end;
 
     -- // Return // --
-	Library.ESP[TableName][TableIndex] = HighlightTable;
-	return HighlightTable;
+    Library.ESP[TableName][TableIndex] = HighlightTable;
+    return HighlightTable;
 end
 
 function Library.ESP.Adornment(args)
-	assert(typeof(args) == "table", "args must be a table.")
-	args = Library.Validate(args, Templates.Adornment);
+    assert(typeof(args) == "table", "args must be a table.")
+    args = Library.Validate(args, Templates.Adornment);
     
     -- // Tracer // --
     do 
@@ -814,26 +814,26 @@ function Library.ESP.Adornment(args)
     end
     assert(typeof(args.Model) == "Instance", "args.Model must be an Instance.");
 
-	args.Type = string.lower(args.Type);
+    args.Type = string.lower(args.Type);
 
-	Library.Debug("Creating Adornment '" .. tostring(args.Name) .. "'...")
-	local BillboardTable = Library.ESP.Billboard({
-		Name = args.Name, 
-		Model = args.Model,
+    Library.Debug("Creating Adornment '" .. tostring(args.Name) .. "'...")
+    local BillboardTable = Library.ESP.Billboard({
+        Name = args.Name, 
+        Model = args.Model,
         MaxDistance = args.MaxDistance,
         StudsOffset = args.StudsOffset,
-		Color = args.TextColor,
-		WasCreatedWithDifferentESP = true
-	});
+        Color = args.TextColor,
+        WasCreatedWithDifferentESP = true
+    });
 
-	local ModelSize;
+    local ModelSize;
     if args.Model:IsA("Model") then
         _, ModelSize = args.Model:GetBoundingBox()
     else
         ModelSize = args.Model.Size
     end
 
-	local Adornment; do
+    local Adornment; do
         if args.Type == "sphere" then 
             Adornment = createInstance("SphereHandleAdornment", {
                 Radius = ModelSize.X * 1.085,
@@ -852,23 +852,23 @@ function Library.ESP.Adornment(args)
         end
     end;
 
-	Adornment.Color3 = args.Color;
-	Adornment.Transparency = args.Transparency;
-	Adornment.AlwaysOnTop = true;
-	Adornment.ZIndex = 10;
-	Adornment.Adornee = args.Model;
-	Adornment.Parent = Library.Folders.Adornments;
+    Adornment.Color3 = args.Color;
+    Adornment.Transparency = args.Transparency;
+    Adornment.AlwaysOnTop = true;
+    Adornment.ZIndex = 10;
+    Adornment.Adornee = args.Model;
+    Adornment.Parent = Library.Folders.Adornments;
 
     local TableName = "Adornments";
-	local TableIndex = randomString();
+    local TableIndex = randomString();
 
-	local AdornmentTable = {
+    local AdornmentTable = {
         TableIndex = TableIndex, TableName = TableName,
 
-		Settings = args,
-		UIElements = { Adornment },
-		TracerInstance = args.Tracer.Enabled == true and Library.ESP.Tracer(args.Tracer) or nil,
-		BillboardInstance = BillboardTable
+        Settings = args,
+        UIElements = { Adornment },
+        TracerInstance = args.Tracer.Enabled == true and Library.ESP.Tracer(args.Tracer) or nil,
+        BillboardInstance = BillboardTable
     };
     AdornmentTable.Connections = {
         Library.Connections.Add(args.Model.AncestryChanged:Connect(function(_, parent)
@@ -911,7 +911,7 @@ function Library.ESP.Adornment(args)
     end;
     AdornmentTable.SetColor = AdornmentTable.Update;
 
-	AdornmentTable.SetText = function(text)
+    AdornmentTable.SetText = function(text)
         if AdornmentTable.Deleted or not BillboardGui then return; end
 
         AdornmentTable.Settings.Name = (typeof(text) == "string" and text or AdornmentTable.Settings.Name);
@@ -919,7 +919,7 @@ function Library.ESP.Adornment(args)
     end;
     AdornmentTable.SetDistanceText = BillboardTable.SetDistanceText;
 
-	AdornmentTable.SetVisible = function(visible, tracer)
+    AdornmentTable.SetVisible = function(visible, tracer)
         if AdornmentTable.Deleted or not Adornment then return; end
 
         AdornmentTable.Settings.Visible = if typeof(visible) == "boolean" then visible else AdornmentTable.Settings.Visible;
@@ -928,13 +928,13 @@ function Library.ESP.Adornment(args)
     end
 
     -- // Return // --
-	Library.ESP[TableName][TableIndex] = AdornmentTable;
-	return AdornmentTable;
+    Library.ESP[TableName][TableIndex] = AdornmentTable;
+    return AdornmentTable;
 end
 
 function Library.ESP.Outline(args)
-	assert(typeof(args) == "table", "args must be a table.")
-	args = Library.Validate(args, Templates.Outline);
+    assert(typeof(args) == "table", "args must be a table.")
+    args = Library.Validate(args, Templates.Outline);
     
     -- // Tracer // --
     do 
@@ -944,44 +944,44 @@ function Library.ESP.Outline(args)
     end
     assert(typeof(args.Model) == "Instance", "args.Model must be an Instance.");
 
-	Library.Debug("Creating Outline '" .. tostring(args.Name) .. "'...")
-	local BillboardTable = Library.ESP.Billboard({
-		Name = args.Name, 
-		Model = args.Model,
+    Library.Debug("Creating Outline '" .. tostring(args.Name) .. "'...")
+    local BillboardTable = Library.ESP.Billboard({
+        Name = args.Name, 
+        Model = args.Model,
         MaxDistance = args.MaxDistance,
         StudsOffset = args.StudsOffset,
-		Color = args.TextColor,
-		WasCreatedWithDifferentESP = true
-	});
+        Color = args.TextColor,
+        WasCreatedWithDifferentESP = true
+    });
 
-	local Outline = createInstance("SelectionBox", {
-		Parent = Library.Folders.Outlines,
+    local Outline = createInstance("SelectionBox", {
+        Parent = Library.Folders.Outlines,
 
-		SurfaceColor3 = args.SurfaceColor,
-		Color3 = args.BorderColor,
-		LineThickness = args.Thickness,
-		SurfaceTransparency = args.Transparency,
+        SurfaceColor3 = args.SurfaceColor,
+        Color3 = args.BorderColor,
+        LineThickness = args.Thickness,
+        SurfaceTransparency = args.Transparency,
 
-		Adornee = args.Model
-	});
+        Adornee = args.Model
+    });
 
     local TableName = "Outlines";
     local TableIndex = randomString();
 
-	local OutlineTable = {
+    local OutlineTable = {
         TableIndex = TableIndex, TableName = TableName,
 
-		Settings = args,
-		UIElements = { Adornment },
-		TracerInstance = args.Tracer.Enabled == true and Library.ESP.Tracer(args.Tracer) or nil,
-		BillboardInstance = BillboardTable
+        Settings = args,
+        UIElements = { Adornment },
+        TracerInstance = args.Tracer.Enabled == true and Library.ESP.Tracer(args.Tracer) or nil,
+        BillboardInstance = BillboardTable
     };
 
     OutlineTable.Connections = {
         Library.Connections.Add(args.Model.AncestryChanged:Connect(function(_, parent)
             if not parent then
                 OutlineTable.Destroy();
-			end
+            end
         end))
     };
 
@@ -1042,8 +1042,8 @@ function Library.ESP.Outline(args)
     end
 
     -- // Return // --
-	Library.ESP[TableName][TableIndex] = OutlineTable;
-	return OutlineTable;
+    Library.ESP[TableName][TableIndex] = OutlineTable;
+    return OutlineTable;
 end
 
 Library.Connections.Add(RunService.RenderStepped:Connect(function(Delta)
@@ -1055,14 +1055,14 @@ Library.Connections.Add(RunService.RenderStepped:Connect(function(Delta)
         Library.Rainbow.HueSetup = Library.Rainbow.HueSetup + (1 / 400);
         if Library.Rainbow.HueSetup > 1 then Library.Rainbow.HueSetup = 0; end;
 
-		Library.Rainbow.Hue = Library.Rainbow.HueSetup;
+        Library.Rainbow.Hue = Library.Rainbow.HueSetup;
         Library.Rainbow.Color = Color3.fromHSV(Library.Rainbow.Hue, 0.8, 1);
     end
 end), "RainbowStepped", true);
 
 -- // Update Handler // --
 local function checkUI(uiTable, TableName, TableIndex)
-	if uiTable == nil and true or (
+    if uiTable == nil and true or (
         typeof(uiTable) == "table" and uiTable.Deleted == true
     ) then 
         if uiTable then
@@ -1071,10 +1071,10 @@ local function checkUI(uiTable, TableName, TableIndex)
         end
 
         Library.ESP[TableName][TableIndex] = nil;
-		return false;
-	end
+        return false;
+    end
 
-	return true;
+    return true;
 end
 
 local function checkVisibility(ui, root)
@@ -1096,21 +1096,21 @@ local function checkVisibility(ui, root)
 end
 
 Library.Connections.Add(workspace:GetPropertyChangedSignal("CurrentCamera"):Connect(function()
-	if workspace.CurrentCamera then camera = workspace.CurrentCamera end
+    if workspace.CurrentCamera then camera = workspace.CurrentCamera end
 end), "CameraUpdate", true)
-				
+                
 Library.Connections.Add(RunService.RenderStepped:Connect(function(dt)
-	if not camera then return end
-	if not character and not rootPart then
-		if not character then localPlayer.CharacterAdded:Wait() end
-		updateVariables(); 
-	end;
+    if not camera then return end
+    if not character and not rootPart then
+        if not character then localPlayer.CharacterAdded:Wait() end
+        updateVariables(); 
+    end;
 
-	for uiName, uiTable in pairs(Library.ESP) do
+    for uiName, uiTable in pairs(Library.ESP) do
         if typeof(uiTable) ~= "table" then continue; end
 
-		for _, ui in pairs(uiTable) do
-			if not checkUI(ui, uiName, ui.TableIndex) then continue; end
+        for _, ui in pairs(uiTable) do
+            if not checkUI(ui, uiName, ui.TableIndex) then continue; end
             local pos, onScreen, canContinue;
 
             -- // Update Tracer // --
@@ -1144,23 +1144,23 @@ Library.Connections.Add(RunService.RenderStepped:Connect(function(dt)
                         end;
                     end
                 end
-			end
+            end
 
             -- // Update // --
             local pos, onScreen, canContinue = checkVisibility(ui, ui.Settings.Model)
             if not canContinue then continue; end
             if ui.Hidden == true then ui.Hidden = nil; ui.SetVisible(true); end
             
-			if uiName == "Billboards" then
-				ui.SetDistanceText(ui.GetDistance());
+            if uiName == "Billboards" then
+                ui.SetDistanceText(ui.GetDistance());
 
-				if ui.WasCreatedWithDifferentESP ~= true then continue; end
-				ui.Update({ Color = Library.Rainbow.Enabled and Library.Rainbow.Color or ui.Settings.Color }, false);
-			elseif uiName == "Adornments" then
-				ui.Update({ 
-					Color        = Library.Rainbow.Enabled and Library.Rainbow.Color or ui.Settings.Color, 
-					TextColor    = Library.Rainbow.Enabled and Library.Rainbow.Color or ui.Settings.TextColor
-				}, false);
+                if ui.WasCreatedWithDifferentESP ~= true then continue; end
+                ui.Update({ Color = Library.Rainbow.Enabled and Library.Rainbow.Color or ui.Settings.Color }, false);
+            elseif uiName == "Adornments" then
+                ui.Update({ 
+                    Color        = Library.Rainbow.Enabled and Library.Rainbow.Color or ui.Settings.Color, 
+                    TextColor    = Library.Rainbow.Enabled and Library.Rainbow.Color or ui.Settings.TextColor
+                }, false);
             elseif uiName == "Highlights" then
                 ui.Update({ 
                     FillColor    = Library.Rainbow.Enabled and Library.Rainbow.Color or ui.Settings.FillColor, 
@@ -1174,8 +1174,8 @@ Library.Connections.Add(RunService.RenderStepped:Connect(function(dt)
                     TextColor    = Library.Rainbow.Enabled and Library.Rainbow.Color or ui.Settings.TextColor
                 }, false);
             end
-		end
-	end
+        end
+    end
 end), "MainUpdate", true);
 
 -- // Set Library and return it // --
