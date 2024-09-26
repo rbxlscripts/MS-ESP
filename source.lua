@@ -326,7 +326,7 @@ local function createDeleteFunction(TableName, TableIndex, Table)
 end
 
 -- // Setup ESP Info Table // --
-Library.Folders.Main = getFolder("__ESP_FOLDER", CoreGui);
+Library.Folders.Main = getFolder("__ESP_FOLDER", localPlayer:WaitForChild("PlayerGui", math.huge))-- CoreGui);
 Library.Folders.Billboards = getFolder("__BILLBOARDS_FOLDER", Library.Folders.Main);
 Library.Folders.Adornments = getFolder("__ADORNMENTS_FOLDER", Library.Folders.Main);
 Library.Folders.Highlights = getFolder("__HIGHLIGHTS_FOLDER", Library.Folders.Main);
