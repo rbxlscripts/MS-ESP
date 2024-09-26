@@ -86,6 +86,19 @@ function Library.Connections.Remove(key)
     end
 end;
 
+Library.Tracers = {
+    Enabled = true,
+
+    Set = function(bool) 
+        if (bool == true or bool == false) then
+            Library.Tracers.Enabled = bool;
+        end; 
+    end,
+    Enable = function() Library.Tracers.Enabled = true; end,
+    Disable = function() Library.Tracers.Enabled = false; end,
+    Toggle = function() Library.Tracers.Enabled = not Library.Enabled; end
+}
+
 Library.Rainbow = {
     HueSetup = 0, Hue = 0, Step = 0,
     Color = Color3.new(),
@@ -327,6 +340,7 @@ local Templates = {
 		Visible = true,
         MaxDistance = 5000,
         StudsOffset = Vector3.new(),
+        TextSize = 16,
 
 		Color = Color3.new(),
 		WasCreatedWithDifferentESP = false
@@ -337,6 +351,7 @@ local Templates = {
 		Visible = true,
         MaxDistance = 5000,
         StudsOffset = Vector3.new(),
+        TextSize = 16,
 
 		From = "Bottom", -- // Top, Center, Bottom, Mouse // --
 
@@ -352,6 +367,7 @@ local Templates = {
 		Visible = true,
         MaxDistance = 5000,
         StudsOffset = Vector3.new(),
+        TextSize = 16,
 
 		FillColor = Color3.new(),
 		OutlineColor = Color3.new(),
@@ -367,6 +383,7 @@ local Templates = {
 		Visible = true,
         MaxDistance = 5000,
         StudsOffset = Vector3.new(),
+        TextSize = 16,
 
 		Color = Color3.new(),
 		TextColor = Color3.new(),
@@ -381,6 +398,7 @@ local Templates = {
 		Visible = true,
         MaxDistance = 5000,
         StudsOffset = Vector3.new(),
+        TextSize = 16,
 
 		SurfaceColor = Color3.new(),
 		BorderColor = Color3.new(),
@@ -483,7 +501,7 @@ function Library.ESP.Billboard(args)
 		Text = "[???]",
 		TextColor3 = args.Color,
 		TextStrokeTransparency = 0,
-		TextSize = 12,
+		TextSize = args.TextSize - 3,
 
 		TextWrapped = true,
 		TextWrap = true,
@@ -509,7 +527,7 @@ function Library.ESP.Billboard(args)
 		Text = args.Name,
 		TextColor3 = args.Color,
 		TextStrokeTransparency = 0,
-		TextSize = 15,
+		TextSize = args.TextSize,
 
 		TextWrapped = true,
 		TextWrap = true,
@@ -793,12 +811,12 @@ function Library.ESP.Highlight(args)
     end;
     HighlightTable.SetDistanceText = BillboardTable.SetDistanceText;
 
-    HighlightTable.SetVisible = function(visible)
+    HighlightTable.SetVisible = function(visible, tracer)
         if HighlightTable.Deleted or not Highlight then return; end
 
         HighlightTable.Settings.Visible = (typeof(visible) == "boolean" and visible or HighlightTable.Settings.Visible);
         Highlight.Enabled = HighlightTable.Settings.Visible;
-        if HighlightTable.TracerInstance ~= nil then HighlightTable.TracerInstance.SetVisible(HighlightTable.Settings.Visible); end;
+        if tracer ~= false and HighlightTable.TracerInstance ~= nil then HighlightTable.TracerInstance.SetVisible(HighlightTable.Settings.Visible); end;
     end;
 
     -- // Return // --
@@ -922,12 +940,12 @@ function Library.ESP.Adornment(args)
     end;
     AdornmentTable.SetDistanceText = BillboardTable.SetDistanceText;
 
-	AdornmentTable.SetVisible = function(visible)
+	AdornmentTable.SetVisible = function(visible, tracer)
         if AdornmentTable.Deleted or not Adornment then return; end
 
         AdornmentTable.Settings.Visible = (typeof(visible) == "boolean" and visible or AdornmentTable.Settings.Visible);
         Adornment.Adornee = AdornmentTable.Settings.Visible and AdornmentTable.Settings.Model or nil;
-        if AdornmentTable.TracerInstance ~= nil then AdornmentTable.TracerInstance.SetVisible(AdornmentTable.Settings.Visible); end;
+        if tracer ~= false and AdornmentTable.TracerInstance ~= nil then AdornmentTable.TracerInstance.SetVisible(AdornmentTable.Settings.Visible); end;
     end
 
     -- // Return // --
@@ -1037,12 +1055,12 @@ function Library.ESP.Outline(args)
     end
     OutlineTable.SetDistanceText = BillboardTable.SetDistanceText;
 
-    OutlineTable.SetVisible = function(visible)
+    OutlineTable.SetVisible = function(visible, tracer)
         if OutlineTable.Deleted or not Highlight then return; end
 
         OutlineTable.Settings.Visible = (typeof(visible) == "boolean" and visible or OutlineTable.Settings.Visible);
         Outline.Adornee = OutlineTable.Settings.Visible and OutlineTable.Settings.Model or nil;
-        if OutlineTable.TracerInstance ~= nil then OutlineTable.TracerInstance.SetVisible(OutlineTable.Settings.Visible); end;
+        if tracer ~= false and OutlineTable.TracerInstance ~= nil then OutlineTable.TracerInstance.SetVisible(OutlineTable.Settings.Visible); end;
     end
 
     -- // Return // --
@@ -1119,7 +1137,7 @@ Library.Connections.Add(RunService.RenderStepped:Connect(function(dt)
                 if tracerTable.Deleted ~= true and tracerTable.TracerDeleted ~= true and tracerTable.TracerInstance ~= nil then
                     pos, onScreen, canContinue = checkVisibility(ui, tracerTable.DistancePart)
 
-                    if onScreen and tracerTable.Settings.Visible then
+                    if Library.Tracers.Enabled and onScreen and tracerTable.Settings.Visible then
                         if tracerTable.Settings.From == "mouse" then
                             local mousePos = UserInputService:GetMouseLocation();
                             tracerTable.TracerInstance.From = Vector2.new(mousePos.X, mousePos.Y);
@@ -1137,7 +1155,7 @@ Library.Connections.Add(RunService.RenderStepped:Connect(function(dt)
                         tracerTable.TracerInstance.To = Vector2.new(pos.X, pos.Y);
                         tracerTable.Update({ Color = Library.Rainbow.Enabled and Library.Rainbow.Color or tracerTable.Settings.Color }, false);
                     else
-                         tracerTable.TracerInstance.Visible = false;
+                        tracerTable.TracerInstance.Visible = false;
                     end
                 else
                     if tracerTable.Deleted ~= true then
