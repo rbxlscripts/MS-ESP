@@ -1095,8 +1095,12 @@ local function checkVisibility(ui, root)
     return pos, onScreen, true;
 end
 
+Library.Connections.Add(workspace:GetPropertyChangedSignal("CurrentCamera"):Connect(function()
+	if workspace.CurrentCamera then camera = workspace.CurrentCamera end
+end), "CameraUpdate", true)
+				
 Library.Connections.Add(RunService.RenderStepped:Connect(function(dt)
-	if not camera then workspace:WaitForChild("CurrentCamera", 9e9); camera = workspace.CurrentCamera; end
+	if not camera then return end
 	if not character and not rootPart then
 		if not character then localPlayer.CharacterAdded:Wait() end
 		updateVariables(); 
