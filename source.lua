@@ -145,6 +145,15 @@ local function getFolder(name, parent)
 	return folder;
 end
 
+local function randomString()
+	local length = math.random(10,20)
+	local array = {}
+	for i = 1, length do
+		array[i] = string.char(math.random(32, 126))
+	end
+	return table.concat(array)
+end
+
 local function hasProperty(instance, property) -- // Finds a property using a pcall call and then returns the value of it // --
 	assert(typeof(instance) == "Instance", "Argument #1 must be an Instance.");
 	assert(typeof(property) == "string", "Argument #2 must be a string.");
@@ -218,92 +227,86 @@ end
 
 local function createDeleteFunction(TableName, TableIndex, Table)
 	local function delete()
-		--local s, e = pcall(function()
         if typeof(Library.ESP[TableName]) ~= "table" then
 			Library.Warn("Table '" .. TableName .. "' doesn't exists in Library.ESP.");
             return;
 		end
 
         for _, uiTable in pairs({ Library.ESP[TableName][TableIndex], Table }) do
-        --local uiTableExists = Library.ESP[TableName][TableIndex] ~= nil;
-        if uiTable == nil then
-			Library.Warn("'???' (" .. tostring(TableName) .. ")' is nil.")
-			continue;
-		end
-
-        local tracerTable = getTracerTable(uiTable);
-		--if uiTable.Deleted == true then
-			-- TODO check if its actually deleted
-            -- Library.Warn("'" .. tostring(uiTable.Settings.Name) .. "' (" .. tostring(TableName) .. ") was already deleted.")
-           -- return;
-		--end
-
-		Library.Debug("Deleting '" .. tostring(uiTable.Settings.Name) .. "' (" .. tostring(TableName) .. ")...");
-
-        -- // Disconnect connections // --
-        if typeof(uiTable.Connections) == "table" then
-            Library.Debug("Removing connections...");
-            for index, connectionKey in pairs(uiTable.Connections) do
-                Library.Connections.Remove(connectionKey);
-                uiTable.Connections[index] = nil;
+            if uiTable == nil then
+                Library.Warn("'???' (" .. tostring(TableName) .. ")' is nil.")
+                continue;
             end
+
+            local tracerTable = getTracerTable(uiTable);
+
+            Library.Debug("Deleting '" .. tostring(uiTable.Settings.Name) .. "' (" .. tostring(TableName) .. ")...");
+
+            -- // Disconnect connections // --
+            if typeof(uiTable.Connections) == "table" then
+                Library.Debug("Removing connections...");
+                for index, connectionKey in pairs(uiTable.Connections) do
+                    Library.Connections.Remove(connectionKey);
+                    uiTable.Connections[index] = nil;
+                end
+            end
+
+            -- // Remove Elements // --
+            if typeof(uiTable.UIElements) == "table" then
+                Library.Debug("Removing elements...");
+                for index, element in pairs(uiTable.UIElements) do
+                    if element == nil or typeof(element) ~= "Instance" then continue; end
+
+                    element:Destroy()
+                    uiTable.UIElements[index] = nil;
+                end
+            end
+
+            -- // Remove Billboard // --
+            if uiTable.BillboardInstance ~= nil and typeof(uiTable.BillboardInstance.Destroy) == "function" then
+                uiTable.BillboardInstance.Destroy()
+            end
+
+            -- // Remove Tracer // --
+            local successTracer, errorMessageTracer = pcall(function()
+                if TableName == "Tracers" then
+                    if typeof(uiTable.TracerInstance) == "table" then
+                        Library.Debug("Removing tracer...");
+                        deleteTracer(uiTable.TracerInstance)
+                    end
+        
+                    local tracerTable = getTracerTable(uiTable);
+                    if tracerTable ~= nil then
+                        Library.Debug("Removing tracer (#2)...");
+                        deleteTracer(tracerTable.TracerInstance)
+                    end
+        
+                    Library.Debug("Tracer deleted!");
+                else
+                    if uiTable.TracerInstance ~= nil then
+                        uiTable.TracerInstance.Destroy();
+                    end
+                end
+            end);
+            if not successTracer then
+                Library.Warn("Failed to delete tracer.", errorMessageTracer);
+            end
+
+            -- // Remove from Library // --
+            uiTable.Deleted = true;
+            local tableIndex = table.find(Library.ESP[TableName], TableIndex)
+            if tableIndex then table.remove(Library.ESP[TableName], tableIndex) end
+
+            if uiTable.TableIndex ~= nil then
+                local uiTableIndex = table.find(Library.ESP[uiTable.TableName], uiTable.TableIndex)
+                if uiTableIndex then table.remove(Library.ESP[uiTable.TableName], uiTableIndex) end
+            end
+
+            Library.Debug("'" .. tostring(uiTable.Settings.Name) .. "' (" .. tostring(TableName) .. ") is now deleted!");
         end
 
-        -- // Remove Elements // --
-        if typeof(uiTable.UIElements) == "table" then
-            Library.Debug("Removing elements...");
-            for index, element in pairs(uiTable.UIElements) do
-                if element == nil or typeof(element) ~= "Instance" then continue; end
-
-                if hasProperty(element, "Adornee") then element.Adornee = nil; end
-                if hasProperty(element, "Visible") then element.Visible = false; task.wait(); end
-                pcall(function() element:Destroy(); end)
-
-                uiTable.UIElements[index] = nil;
-            end
-        end
-
-	-- // Remove Billboard // --
-        if uiTable.BillboardInstance ~= nil and typeof(uiTable.BillboardInstance.Destroy) == "function" then
-           uiTable.BillboardInstance.Destroy()
-	end
-
-        -- // Remove Tracer // --
-        local successTracer, errorMessageTracer = pcall(function()
-            if TableName == "Tracers" then
-                if typeof(uiTable.TracerInstance) == "table" then
-                    Library.Debug("Removing tracer...");
-                    deleteTracer(uiTable.TracerInstance)
-                end
-    
-                local tracerTable = getTracerTable(uiTable);
-                if tracerTable ~= nil then
-                    Library.Debug("Removing tracer (#2)...");
-                    deleteTracer(tracerTable.TracerInstance)
-                end
-    
-                Library.Debug("Tracer deleted!");
-            else
-                if uiTable.TracerInstance ~= nil then
-                    uiTable.TracerInstance.Destroy();
-                end
-            end
-        end);
-        if not successTracer then
-			Library.Warn("Failed to delete tracer.", errorMessageTracer);
-		end
-
-        -- // Remove from Library // --
-        uiTable.Deleted = true;
-        -- table.remove(Library.ESP[uiTable.TableName], uiTable.TableIndex);
-        Library.ESP[TableName][TableIndex] = nil;
-        if uiTable.TableIndex ~= 0 then Library.ESP[uiTable.TableName][uiTable.TableIndex] = nil; end
-
-        Library.Debug("'" .. tostring(uiTable.Settings.Name) .. "' (" .. tostring(TableName) .. ") is now deleted!");
-	end
-			-- if uiTableExists then delete() end
-		--end)
-		--if not s then Library.Warn(e) end
+        Library.Debug("----------")
+        Library.Debug("Finished all system of deleting [", TableName, "]")
 	end
 
 	return delete;
@@ -315,27 +318,6 @@ Library.Folders.Billboards = getFolder("__BILLBOARDS_FOLDER", Library.Folders.Ma
 Library.Folders.Adornments = getFolder("__ADORNMENTS_FOLDER", Library.Folders.Main);
 Library.Folders.Highlights = getFolder("__HIGHLIGHTS_FOLDER", Library.Folders.Main);
 Library.Folders.Outlines = getFolder("__OUTLINES_FOLDER", Library.Folders.Main);
-
---[[if global().mstudio45 and global().mstudio45.ESPLibrary then
-    local success, errorMessage = pcall(function()
-        for key, con in pairs(global().mstudio45.ESPLibrary.Connections.List) do
-            global().mstudio45.ESPLibrary.Connections.Remove(key)
-        end
-    
-        global().mstudio45.ESPLibrary.ESP.Clear();
-    end)
-
-    if success == false then
-        Library.Warn("Failed to deload already loaded Library.", errorMessage)
-    end
-
-    for name, uiFolder in pairs(Library.Folders) do
-        if name == "Main" then continue; end
-
-        Library.Debug("Clearing '" .. tostring(name) .. "' folder...")
-        uiFolder:ClearAllChildren();
-    end
-end--]]
 
 -- // ESP Templates // --
 local Templates = {
@@ -446,9 +428,6 @@ function Library.ESP.Clear()
 			elseif typeof(uiElement) == "Instance" then
 			    uiElement:Destroy();
 			end
-
-			--task.wait();
-			-- end);
 		end
 	end
 
@@ -542,7 +521,7 @@ function Library.ESP.Billboard(args)
 	createInstance("UIStroke", { Parent = Text });
 
     local TableName = "Billboards";
-    local TableIndex = #Library.ESP[TableName] + 1;
+    local TableIndex = randomString();
 
 	local BillboardTable = {
         TableIndex = TableIndex, TableName = TableName,
@@ -559,10 +538,7 @@ function Library.ESP.Billboard(args)
     BillboardTable.Connections = {
         Library.Connections.Add(args.Model.AncestryChanged:Connect(function(_, parent)
             if not parent then
-                local uiTable = Library.ESP[TableName][TableIndex]
-                if uiTable ~= nil and typeof(uiTable.Destroy) == "function" then --or typeof(uiTable.Delete) == "function") then
-                    uiTable.Destroy()
-				end
+                warn("Removing billboard cuz no parent")
                 BillboardTable.Destroy();
             end
         end))
@@ -658,7 +634,7 @@ function Library.ESP.Tracer(args)
 	TracerInstance.Transparency = args.Transparency;
 
     local TableName = "Tracers";
-	local TableIndex = #Library.ESP[TableName] + 1;
+	local TableIndex = randomString();
 
 	local TracerTable = {
         TableIndex = TableIndex, TableName = TableName,
@@ -671,10 +647,7 @@ function Library.ESP.Tracer(args)
     TracerTable.Connections = {
         Library.Connections.Add(args.Model.AncestryChanged:Connect(function(_, parent)
             if not parent then
-                local uiTable = Library.ESP[TableName][TableIndex]
-                if uiTable ~= nil and typeof(uiTable.Destroy) == "function" then -- or typeof(uiTable.Delete) == "function") then
-                    uiTable.Destroy()
-				end
+                warn("Removing tracer cuz no parent")
                 TracerTable.Destroy();
             end
         end))
@@ -758,7 +731,7 @@ function Library.ESP.Highlight(args)
 	});
 
     local TableName = "Highlights";
-    local TableIndex = #Library.ESP[TableName] + 1;
+    local TableIndex = randomString();
 
 	local HighlightTable = { 
         TableIndex = TableIndex, TableName = TableName,
@@ -771,10 +744,7 @@ function Library.ESP.Highlight(args)
     HighlightTable.Connections = {
         Library.Connections.Add(args.Model.AncestryChanged:Connect(function(_, parent)
             if not parent then
-                local uiTable = Library.ESP[TableName][TableIndex]
-                if uiTable ~= nil and typeof(uiTable.Destroy) == "function" then -- or typeof(uiTable.Delete) == "function") then
-                    uiTable.Destroy()
-				end
+                warn("Removing hughlight cuz no parent")
                 HighlightTable.Destroy();
             end
         end))
@@ -894,7 +864,7 @@ function Library.ESP.Adornment(args)
 	Adornment.Parent = Library.Folders.Adornments;
 
     local TableName = "Adornments";
-	local TableIndex = #Library.ESP[TableName] + 1;
+	local TableIndex = randomString();
 
 	local AdornmentTable = {
         TableIndex = TableIndex, TableName = TableName,
@@ -907,10 +877,7 @@ function Library.ESP.Adornment(args)
     AdornmentTable.Connections = {
         Library.Connections.Add(args.Model.AncestryChanged:Connect(function(_, parent)
             if not parent then
-                local uiTable = Library.ESP[TableName][TableIndex]
-                if uiTable ~= nil and typeof(uiTable.Destroy) == "function" then --or typeof(uiTable.Delete) == "function") then
-                    uiTable.Destroy()
-				end
+                warn("Removing adornment cuz no parent")
                 AdornmentTable.Destroy();
             end
         end))
@@ -1002,7 +969,7 @@ function Library.ESP.Outline(args)
 	});
 
     local TableName = "Outlines";
-    local TableIndex = #Library.ESP[TableName] + 1;
+    local TableIndex = randomString();
 
 	local OutlineTable = {
         TableIndex = TableIndex, TableName = TableName,
@@ -1016,10 +983,7 @@ function Library.ESP.Outline(args)
     OutlineTable.Connections = {
         Library.Connections.Add(args.Model.AncestryChanged:Connect(function(_, parent)
             if not parent then
-                local uiTable = Library.ESP[TableName][TableIndex]
-                if uiTable ~= nil and typeof(uiTable.Destroy) == "function" then -- or typeof(uiTable.Delete) == "function") then
-                    uiTable.Destroy()
-				end
+                warn("Removing outline cuz no parent")
                 OutlineTable.Destroy();
 			end
         end))
@@ -1173,10 +1137,7 @@ Library.Connections.Add(RunService.RenderStepped:Connect(function(dt)
                         tracerTable.TracerInstance.To = Vector2.new(pos.X, pos.Y);
                         tracerTable.Update({ Color = Library.Rainbow.Enabled and Library.Rainbow.Color or tracerTable.Settings.Color }, false);
                     else
-                       -- if tracerTable.Hidden ~= true then
-                       --     tracerTable.Hidden = true;
-                            tracerTable.TracerInstance.Visible = false;
-                        --end
+                         tracerTable.TracerInstance.Visible = false;
                     end
                 else
                     if tracerTable.Deleted ~= true then
