@@ -314,6 +314,8 @@ local function createDeleteFunction(TableName, TableIndex, Table)
                 if uiTableIndex then table.remove(Library.ESP[uiTable.TableName], uiTableIndex) end
             end
 
+            if typeof(uiTable.OnDestroy) == "function" then pcall(uiTable.OnDestroy) end
+
             Library.Debug("'" .. tostring(uiTable.Settings.Name) .. "' (" .. tostring(TableName) .. ") is now deleted!");
         end
 
@@ -342,7 +344,9 @@ local Templates = {
         TextSize = 16,
 
         Color = Color3.new(),
-        WasCreatedWithDifferentESP = false
+        WasCreatedWithDifferentESP = false,
+
+        OnDestroy = nil,
     },
 
     Tracer = {
@@ -358,6 +362,8 @@ local Templates = {
 
         Thickness = 2,
         Transparency = 0.65,
+
+        OnDestroy = nil,
     },
 
     Highlight = {
@@ -373,7 +379,9 @@ local Templates = {
         TextColor = Color3.new(),
 
         FillTransparency = 0.65,
-        OutlineTransparency = 0
+        OutlineTransparency = 0,
+
+        OnDestroy = nil,
     },
 
     Adornment = {
@@ -388,7 +396,9 @@ local Templates = {
         TextColor = Color3.new(),
 
         Transparency = 0.65,
-        Type = "Box" -- // Box, Cylinder, Sphere // --
+        Type = "Box", -- // Box, Cylinder, Sphere // --
+
+        OnDestroy = nil,
     },
 
     Outline = {
@@ -404,7 +414,9 @@ local Templates = {
         TextColor = Color3.new(),
 
         Thickness = 0.04, -- 2
-        Transparency = 0.65
+        Transparency = 0.65,
+
+        OnDestroy = nil,
     }
 }
 
@@ -531,6 +543,7 @@ function Library.ESP.Billboard(args)
     -- // Delete Handler // --
     BillboardTable.Deleted = false;
     BillboardTable.Destroy = createDeleteFunction(TableName, TableIndex, BillboardTable);
+    BillboardTable.OnDestroy = args.OnDestroy;
     --BillboardTable.Delete = BillboardTable.Destroy;
 
     BillboardTable.GetDistance = function()
@@ -640,6 +653,7 @@ function Library.ESP.Tracer(args)
     -- // Delete Handler // --
     TracerTable.Deleted = false;
     TracerTable.Destroy = createDeleteFunction(TableName, TableIndex, TracerTable);
+    TracerTable.OnDestroy = args.OnDestroy;
     --TracerTable.Delete = TracerTable.Destroy;
 
     TracerTable.DistancePart = findPrimaryPart(TracerTable.Settings.Model);
@@ -736,6 +750,7 @@ function Library.ESP.Highlight(args)
     -- // Delete Handler // --
     HighlightTable.Deleted = false;
     HighlightTable.Destroy = createDeleteFunction(TableName, TableIndex, HighlightTable);
+    HighlightTable.OnDestroy = args.OnDestroy;
     --HighlightTable.Delete = HighlightTable.Destroy;
 
     HighlightTable.GetDistance = BillboardTable.GetDistance;
@@ -880,6 +895,7 @@ function Library.ESP.Adornment(args)
     -- // Delete Handler // --
     AdornmentTable.Deleted = false;
     AdornmentTable.Destroy = createDeleteFunction(TableName, TableIndex, AdornmentTable);
+    AdornmentTable.OnDestroy = args.OnDestroy;
     --AdornmentTable.Delete = AdornmentTable.Destroy;
 
     AdornmentTable.GetDistance = BillboardTable.GetDistance;
@@ -987,6 +1003,7 @@ function Library.ESP.Outline(args)
     -- // Delete Handler // --
     OutlineTable.Deleted = false;
     OutlineTable.Destroy = createDeleteFunction(TableName, TableIndex, OutlineTable);
+    OutlineTable.OnDestroy = args.OnDestroy;
     --OutlineTable.Delete = OutlineTable.Destroy;
 
     OutlineTable.GetDistance = BillboardTable.GetDistance;
