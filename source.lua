@@ -759,7 +759,7 @@ function Library.ESP.Highlight(args)
     HighlightTable.GetDistance = BillboardTable.GetDistance;
 
     HighlightTable.Update = function(args, updateVariables)
-        if HighlightTable.Deleted or (not Highlight and not BillboardGui) then return; end
+        if HighlightTable.Deleted or (not Highlight and not BillboardTable) then return; end
     
         if HighlightTable.TracerInstance ~= nil and typeof(args.Tracer) == "table" then 
             HighlightTable.TracerInstance.Update(args.Tracer, updateVariables); 
@@ -799,7 +799,7 @@ function Library.ESP.Highlight(args)
     HighlightTable.SetColor = HighlightTable.Update;
 
     HighlightTable.SetText = function(text)
-        if HighlightTable.Deleted or not BillboardGui then return; end
+        if HighlightTable.Deleted or not BillboardTable then return; end
 
         HighlightTable.Settings.Name = (typeof(text) == "string" and text or HighlightTable.Settings.Name);
         BillboardTable.SetText(HighlightTable.Settings.Name);
@@ -904,7 +904,7 @@ function Library.ESP.Adornment(args)
     AdornmentTable.GetDistance = BillboardTable.GetDistance;
 
     AdornmentTable.Update = function(args, updateVariables)
-        if AdornmentTable.Deleted or (not Adornment and not BillboardGui) then return; end
+        if AdornmentTable.Deleted or (not Adornment and not BillboardTable) then return; end
 
         if AdornmentTable.TracerInstance ~= nil and typeof(args.Tracer) == "table" then 
             AdornmentTable.TracerInstance.Update(args.Tracer, updateVariables); 
@@ -930,7 +930,7 @@ function Library.ESP.Adornment(args)
     AdornmentTable.SetColor = AdornmentTable.Update;
 
     AdornmentTable.SetText = function(text)
-        if AdornmentTable.Deleted or not BillboardGui then return; end
+        if AdornmentTable.Deleted or not BillboardTable then return; end
 
         AdornmentTable.Settings.Name = (typeof(text) == "string" and text or AdornmentTable.Settings.Name);
         BillboardTable.SetText(AdornmentTable.Settings.Name);
@@ -1012,7 +1012,7 @@ function Library.ESP.Outline(args)
     OutlineTable.GetDistance = BillboardTable.GetDistance;
 
     OutlineTable.Update = function(args, updateVariables)
-        if OutlineTable.Deleted or (not Outline and not BillboardGui) then return; end
+        if OutlineTable.Deleted or (not Outline and not BillboardTable) then return; end
 
         if OutlineTable.TracerInstance ~= nil and typeof(args.Tracer) == "table" then 
             OutlineTable.TracerInstance.Update(args.Tracer, updateVariables); 
@@ -1045,7 +1045,7 @@ function Library.ESP.Outline(args)
     OutlineTable.SetColor = OutlineTable.Update;
 
     OutlineTable.SetText = function(text)
-        if OutlineTable.Deleted or not BillboardGui then return; end
+        if OutlineTable.Deleted or not BillboardTable then return; end
     
         OutlineTable.Settings.Name = (typeof(text) == "string" and text or OutlineTable.Settings.Name);
         BillboardTable.SetText(OutlineTable.Settings.Name);
