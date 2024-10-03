@@ -86,6 +86,19 @@ function Library.Connections.Remove(key)
     end
 end;
 
+Library.Distance = {
+    Enabled = true,
+
+    Set = function(bool) 
+        if (bool == true or bool == false) then
+            Library.Distance.Enabled = bool;
+        end; 
+    end,
+    Enable = function() Library.Distance.Enabled = true; end,
+    Disable = function() Library.Distance.Enabled = false; end,
+    Toggle = function() Library.Distance.Enabled = not Library.Enabled; end
+}
+
 Library.Tracers = {
     Enabled = true,
 
@@ -582,9 +595,13 @@ function Library.ESP.Billboard(args)
     end;
     BillboardTable.SetDistanceText = function(distance)
         if BillboardTable.Deleted or not Text then return; end
+        if typeof(distance) ~= "number" then return; end
 
-        if typeof(distance) ~= "number" then return end;
-        Text.Text = string.format("%s\n<font size=\"%d\">[%s]</font>", BillboardTable.Settings.Name, BillboardTable.Settings.TextSize - 3, distance)
+        if Library.Distance.Enabled then
+            Text.Text = string.format("%s\n<font size=\"%d\">[%s]</font>", BillboardTable.Settings.Name, BillboardTable.Settings.TextSize - 3, distance)
+        else
+            Text.Text = BillboardTable.Settings.Name
+        end
     end;
 
     BillboardTable.SetVisible = function(visible)
