@@ -1153,10 +1153,10 @@ Library.Connections.Add(RunService.RenderStepped:Connect(function(dt)
             -- // Update Tracer // --
             local tracerTable = getTracerTable(ui);
             if tracerTable ~= nil then
-                if tracerTable.Deleted ~= true and tracerTable.TracerDeleted ~= true and tracerTable.TracerInstance ~= nil then
+                if tracerTable.Deleted ~= true and tracerTable.TracerDeleted ~= true and tracerTable.TracerInstance ~= nil and Library.Tracers.Enabled then
                     pos, onScreen, canContinue = checkVisibility(ui, tracerTable.DistancePart)
 
-                    if Library.Tracers.Enabled and onScreen and tracerTable.Settings.Visible then
+                    if onScreen and tracerTable.Settings.Visible then
                         if tracerTable.Settings.From == "mouse" then
                             local mousePos = UserInputService:GetMouseLocation();
                             tracerTable.TracerInstance.From = Vector2.new(mousePos.X, mousePos.Y);
@@ -1169,7 +1169,7 @@ Library.Connections.Add(RunService.RenderStepped:Connect(function(dt)
                         end
         
                         tracerTable.TracerInstance.To = Vector2.new(pos.X, pos.Y);
-                        tracerTable.Update({ Color = Library.Rainbow.Enabled and Library.Rainbow.Color or tracerTable.Settings.Color }, false);
+                        tracerTable.Update({ Color = Library.Rainbow.Enabled and Library.Rainbow.Color or tracerTable.Settings.Color, }, false);
                     else
                         tracerTable.TracerInstance.Visible = false;
                     end
