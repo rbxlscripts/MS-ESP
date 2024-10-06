@@ -1169,7 +1169,7 @@ Library.Connections.Add(RunService.RenderStepped:Connect(function(dt)
                         end
         
                         tracerTable.TracerInstance.To = Vector2.new(pos.X, pos.Y);
-                        tracerTable.Update({ Color = Library.Rainbow.Enabled and Library.Rainbow.Color or tracerTable.Settings.Color, }, false);
+                        tracerTable.Update({ Color = Library.Rainbow.Enabled and Library.Rainbow.Color or tracerTable.Settings.Color }, false);
                     else
                         tracerTable.TracerInstance.Visible = false;
                     end
