@@ -21,7 +21,7 @@ end
 
 local __DEBUG = false;
 local __LOG = true;
-local __PREFIX = "mstudio45's ESP"
+local __PREFIX = "mstudio45's ESP (v1.0-PLSFUCKINGWORK)"
 
 local Library = {
     -- // Loggin // --
