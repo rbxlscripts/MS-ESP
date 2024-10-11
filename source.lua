@@ -717,11 +717,14 @@ function Library.ESP.Arrow(args)
         args = Library.Validate(args, ArrowTable.Settings);
 
         local _Color = typeof(args.Color) == "Color3" and args.Color or ArrowTable.Settings.Color;
+        local _Visible = typeof(args.Visible) == "boolean" and args.Visible or ArrowTable.Settings.Visible;                            
         Arrow.ImageColor3 = _Color;
+        Arrow.Visible = _Visible;                           
         
         if updateVariables ~= false then
             ArrowTable.Settings.Color = _Color;
             ArrowTable.Settings.CenterOffset = typeof(args.CenterOffset) == "number" and args.CenterOffset or ArrowTable.Settings.CenterOffset;
+            ArrowTable.Settings.Visible = typeof(args.Visible) == "boolean" and args.Visible or ArrowTable.Settings.Visible;
 
             ArrowTable.Settings.MaxDistance = typeof(args.MaxDistance) == "number" and args.MaxDistance or ArrowTable.Settings.MaxDistance;
         end
@@ -741,7 +744,7 @@ function Library.ESP.Arrow(args)
         ArrowTable.Settings.Rotation = if typeof(rotation) == "number" then rotation else ArrowTable.Settings.Rotation;
         ArrowTable.Settings.Position = if typeof(position) == "UDim2" then position else ArrowTable.Settings.Position;
 
-        Arrow.Visible = if typeof(visible) == "boolean" then visible else ArrowTable.Settings.Visible;
+        Arrow.Visible = (if typeof(visible) == "boolean" then visible else Arrow.Visible);
         Arrow.Position = ArrowTable.Settings.Position;
         Arrow.Rotation = ArrowTable.Settings.Rotation;
     end;
@@ -1382,7 +1385,7 @@ Library.Connections.Add(RunService.RenderStepped:Connect(function(dt)
                     local angle = math.deg(arctan) + 90;
 
                     local isVisible = (if arrowTable.Settings.FlipOnScreenCheck then (onScreen) else (not onScreen)) and arrowTable.Settings.Visible == true
-                    print(isVisible, onScreen, arrowTable.Settings.Visible == true)
+                    print("is visible:", isVisible, "| on screen:", onScreen, "| vis setting:", arrowTable.Settings.Visible)
                     arrowTable.UpdateArrow(
                         angle + 180 * (IsInverted and 0 or 1), 
                         UDim2.new(
@@ -1394,7 +1397,7 @@ Library.Connections.Add(RunService.RenderStepped:Connect(function(dt)
      
                     arrowTable.Update({ Color = Library.Rainbow.Enabled and Library.Rainbow.Color or arrowTable.Settings.Color }, false);
                 else
-                    arrowTable.UpdateArrow(nil, nil, false);
+                    arrowTable.Update({ Visible = false }, false);
                 end;
             end;
 
