@@ -740,9 +740,7 @@ function Library.ESP.Arrow(args)
         ArrowTable.Settings.Rotation = if typeof(rotation) == "number" then rotation else ArrowTable.Settings.Rotation;
         ArrowTable.Settings.Position = if typeof(position) == "UDim2" then position else ArrowTable.Settings.Position;
 
-        if ArrowTable.Settings.Visible == true then
-            Arrow.Visible = if typeof(visible) == "boolean" then visible else ArrowTable.Settings.Visible;
-        end
+        Arrow.Visible = if typeof(visible) == "boolean" then visible else ArrowTable.Settings.Visible;
         Arrow.Position = ArrowTable.Settings.Position;
         Arrow.Rotation = ArrowTable.Settings.Rotation;
     end;
@@ -1363,40 +1361,38 @@ Library.Connections.Add(RunService.RenderStepped:Connect(function(dt)
             -- // Update Arrow // --
             local arrowTable = getArrowTable(ui);
             if arrowTable then
-                if arrowTable.Settings.Visible == true then
-                    if Library.Arrows.Enabled == true then
-                        local screenSize = camera.ViewportSize;
-                        local centerPos = Vector2.new(screenSize.X / 2, screenSize.Y/2);
-                        -- use aspect to make oval circle (it's more accurate)
-                        -- local aspectRatioX = screenSize.X / screenSize.Y;
-                        -- local aspectRatioY = screenSize.Y / screenSize.X;
+                if Library.Arrows.Enabled == true then
+                    local screenSize = camera.ViewportSize;
+                    local centerPos = Vector2.new(screenSize.X / 2, screenSize.Y/2);
+                    -- use aspect to make oval circle (it's more accurate)
+                    -- local aspectRatioX = screenSize.X / screenSize.Y;
+                    -- local aspectRatioY = screenSize.Y / screenSize.X;
+                    
+                    local arrowPosPixel = Vector2.new(arrowTable.ArrowInstance.Position.X.Scale, arrowTable.ArrowInstance.Position.Y.Scale) * 1000;
+     
+                    pos, onScreen, canContinue = checkVisibility(arrowTable, arrowTable.Settings.Model);
+                    print(onScreen)
+                    local partPos = Vector2.new(pos.X, pos.Y);
+     
+                    local IsInverted = pos.Z <= 0;
+                    local invert = (IsInverted and -1 or 1);
                         
-                        local arrowPosPixel = Vector2.new(arrowTable.ArrowInstance.Position.X.Scale, arrowTable.ArrowInstance.Position.Y.Scale) * 1000;
-    
-                        pos, onScreen, canContinue = checkVisibility(arrowTable, arrowTable.Settings.Model);
-                        print(onScreen)
-                        local partPos = Vector2.new(pos.X, pos.Y);
-    
-                        local IsInverted = pos.Z <= 0;
-                        local invert = (IsInverted and -1 or 1);
-                            
-                        local direction = (partPos - centerPos);
-                        local arctan = math.atan2(direction.Y, direction.X);
-                        local angle = math.deg(arctan) + 90;
-    
-                        arrowTable.UpdateArrow(
-                            angle + 180 * (IsInverted and 0 or 1), 
-                            UDim2.new(
-                                0, centerPos.X + (arrowTable.Settings.CenterOffset * math.cos(arctan) * invert), 
-                                0, centerPos.Y + (arrowTable.Settings.CenterOffset * math.sin(arctan) * invert)
-                            ),
-                            not onScreen
-                        );
-    
-                        arrowTable.Update({ Color = Library.Rainbow.Enabled and Library.Rainbow.Color or arrowTable.Settings.Color }, false);
-                    else
-                        arrowTable.UpdateArrow(nil, nil, false);
-                    end;
+                    local direction = (partPos - centerPos);
+                    local arctan = math.atan2(direction.Y, direction.X);
+                    local angle = math.deg(arctan) + 90;
+     
+                    arrowTable.UpdateArrow(
+                        angle + 180 * (IsInverted and 0 or 1), 
+                        UDim2.new(
+                            0, centerPos.X + (arrowTable.Settings.CenterOffset * math.cos(arctan) * invert), 
+                            0, centerPos.Y + (arrowTable.Settings.CenterOffset * math.sin(arctan) * invert)
+                        ),
+                        not onScreen and arrowTable.Settings.Visible == true
+                    );
+     
+                    arrowTable.Update({ Color = Library.Rainbow.Enabled and Library.Rainbow.Color or arrowTable.Settings.Color }, false);
+                else
+                    arrowTable.UpdateArrow(nil, nil, false);
                 end;
             end;
 
