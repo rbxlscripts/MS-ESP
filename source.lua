@@ -708,6 +708,7 @@ function Library.ESP.Arrow(args)
         
         if updateVariables ~= false then
             ArrowTable.Settings.Color = _Color;
+            ArrowTable.Settings.CenterOffset = typeof(args.CenterOffset) == "number" and args.CenterOffset or ArrowTable.Settings.CenterOffset;
 
             ArrowTable.Settings.MaxDistance = typeof(args.MaxDistance) == "number" and args.MaxDistance or ArrowTable.Settings.MaxDistance;
         end
