@@ -1298,7 +1298,7 @@ local function checkVisibility(ui, root)
     local maxDist = tonumber(ui.Settings.MaxDistance) or 5000
 
     -- // Check Distance and if its on the screen // --
-    if not onScreen or distanceFromChar > maxDist then
+    if (ui.IsNormalArrow ~= true and not onScreen) or distanceFromChar > maxDist then
         if ui.Hidden ~= true then
             ui.Hidden = true;
             ui.SetVisible(false);
