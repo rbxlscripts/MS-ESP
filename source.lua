@@ -1333,7 +1333,36 @@ Library.Connections.Add(RunService.RenderStepped:Connect(function(dt)
 
         for _, ui in pairs(uiTable) do
             if not checkUI(ui, uiName, ui.TableIndex) then continue; end
-            local pos, onScreen, canContinue;
+                                                                                                                                                         
+            local pos, onScreen, canContinue = checkVisibility(ui, ui.Settings.Model);
+            if canContinue then 
+                if ui.Hidden == true then ui.Hidden = nil; ui.SetVisible(true); end
+                
+                if uiName == "Billboards" then
+                    ui.SetDistanceText(ui.GetDistance());
+    
+                    if ui.WasCreatedWithDifferentESP == true then
+                        ui.Update({ Color = Library.Rainbow.Enabled and Library.Rainbow.Color or ui.Settings.Color }, false);
+                    end
+                elseif uiName == "Adornments" then
+                    ui.Update({ 
+                        Color        = Library.Rainbow.Enabled and Library.Rainbow.Color or ui.Settings.Color, 
+                        TextColor    = Library.Rainbow.Enabled and Library.Rainbow.Color or ui.Settings.TextColor
+                    }, false);
+                elseif uiName == "Highlights" then
+                    ui.Update({ 
+                        FillColor    = Library.Rainbow.Enabled and Library.Rainbow.Color or ui.Settings.FillColor, 
+                        OutlineColor = Library.Rainbow.Enabled and Library.Rainbow.Color or ui.Settings.OutlineColor, 
+                        TextColor    = Library.Rainbow.Enabled and Library.Rainbow.Color or ui.Settings.TextColor
+                    }, false);
+                elseif uiName == "Outlines" then
+                    ui.Update({ 
+                        SurfaceColor = Library.Rainbow.Enabled and Library.Rainbow.Color or ui.Settings.SurfaceColor, 
+                        OutlineColor = Library.Rainbow.Enabled and Library.Rainbow.Color or ui.Settings.OutlineColor, 
+                        TextColor    = Library.Rainbow.Enabled and Library.Rainbow.Color or ui.Settings.TextColor
+                    }, false);
+                end
+            end
 
             -- // Update Tracer // --
             local tracerTable = getTracerTable(ui);
@@ -1405,35 +1434,6 @@ Library.Connections.Add(RunService.RenderStepped:Connect(function(dt)
                     arrowTable.ArrowInstance.Visible = false;
                 end;
             end;
-
-            -- // Update // --
-            pos, onScreen, canContinue = checkVisibility(ui, ui.Settings.Model)
-            if not canContinue then continue; end
-            if ui.Hidden == true then ui.Hidden = nil; ui.SetVisible(true); end
-            
-            if uiName == "Billboards" then
-                ui.SetDistanceText(ui.GetDistance());
-
-                if ui.WasCreatedWithDifferentESP ~= true then continue; end
-                ui.Update({ Color = Library.Rainbow.Enabled and Library.Rainbow.Color or ui.Settings.Color }, false);
-            elseif uiName == "Adornments" then
-                ui.Update({ 
-                    Color        = Library.Rainbow.Enabled and Library.Rainbow.Color or ui.Settings.Color, 
-                    TextColor    = Library.Rainbow.Enabled and Library.Rainbow.Color or ui.Settings.TextColor
-                }, false);
-            elseif uiName == "Highlights" then
-                ui.Update({ 
-                    FillColor    = Library.Rainbow.Enabled and Library.Rainbow.Color or ui.Settings.FillColor, 
-                    OutlineColor = Library.Rainbow.Enabled and Library.Rainbow.Color or ui.Settings.OutlineColor, 
-                    TextColor    = Library.Rainbow.Enabled and Library.Rainbow.Color or ui.Settings.TextColor
-                }, false);
-            elseif uiName == "Outlines" then
-                ui.Update({ 
-                    SurfaceColor = Library.Rainbow.Enabled and Library.Rainbow.Color or ui.Settings.SurfaceColor, 
-                    OutlineColor = Library.Rainbow.Enabled and Library.Rainbow.Color or ui.Settings.OutlineColor, 
-                    TextColor    = Library.Rainbow.Enabled and Library.Rainbow.Color or ui.Settings.TextColor
-                }, false);
-            end
         end
     end
 end), "MainUpdate", true);
