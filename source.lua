@@ -716,17 +716,15 @@ function Library.ESP.Arrow(args)
         if ArrowTable.Deleted or not Arrow then return; end
         args = Library.Validate(args, ArrowTable.Settings);
 
-        local _Color = typeof(args.Color) == "Color3" and args.Color or ArrowTable.Settings.Color;
-        local _Visible = typeof(args.Visible) == "boolean" and args.Visible or ArrowTable.Settings.Visible;                            
-        Arrow.ImageColor3 = _Color;
-        Arrow.Visible = _Visible;                           
+        local _Color = if typeof(args.Color) == "Color3" then args.Color else ArrowTable.Settings.Color;                         
+        Arrow.ImageColor3 = _Color;                      
         
         if updateVariables ~= false then
             ArrowTable.Settings.Color = _Color;
-            ArrowTable.Settings.CenterOffset = typeof(args.CenterOffset) == "number" and args.CenterOffset or ArrowTable.Settings.CenterOffset;
-            ArrowTable.Settings.Visible = _Visible;
+            ArrowTable.Settings.CenterOffset = if typeof(args.CenterOffset) == "number" then args.CenterOffset else ArrowTable.Settings.CenterOffset;
+            ArrowTable.Settings.Visible = if typeof(args.Visible) == "boolean" then args.Visible else ArrowTable.Settings.Visible;
 
-            ArrowTable.Settings.MaxDistance = typeof(args.MaxDistance) == "number" and args.MaxDistance or ArrowTable.Settings.MaxDistance;
+            ArrowTable.Settings.MaxDistance = if typeof(args.MaxDistance) == "number" then args.MaxDistance else ArrowTable.Settings.MaxDistance;
         end
     end;
     ArrowTable.SetColor = ArrowTable.Update;
@@ -1400,11 +1398,11 @@ Library.Connections.Add(RunService.RenderStepped:Connect(function(dt)
                             0, centerPos.Y + (arrowTable.Settings.CenterOffset * math.sin(arctan) * invert)
                         )
                     );
-                    arrowTable.Update({ Visible = (onScreen == false) }, false);
+                    arrowTable.ArrowInstance.Visible = (onScreen == false);
      
                     arrowTable.Update({ Color = Library.Rainbow.Enabled and Library.Rainbow.Color or arrowTable.Settings.Color }, false);
                 else
-                    arrowTable.Update({ Visible = false }, false);
+                    arrowTable.ArrowInstance.Visible = false;
                 end;
                   
                 return;
