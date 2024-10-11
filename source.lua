@@ -1404,8 +1404,6 @@ Library.Connections.Add(RunService.RenderStepped:Connect(function(dt)
                 else
                     arrowTable.ArrowInstance.Visible = false;
                 end;
-
-                continue;
             end;
 
             -- // Update // --
