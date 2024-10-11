@@ -16,7 +16,7 @@
 local global = getgenv; -- function() return getgenvFunc and getgenvFunc() or _G; end
 
 if global().mstudio45 and global().mstudio45.ESPLibrary then
-    return global().mstudio45.ESPLibrary;
+   -- TEMP: return global().mstudio45.ESPLibrary;
 end
 
 local __DEBUG = false;
@@ -1292,19 +1292,19 @@ local function checkUI(uiTable, TableName, TableIndex)
     return true;
 end
 
-local function checkVisibility(ui, root)
+local function checkVisibility(ui, root, skipOnScreen)
     local pos, onScreen = worldToViewport(root:GetPivot().Position);
     local distanceFromChar = distanceFromCharacter(root);
     local maxDist = tonumber(ui.Settings.MaxDistance) or 5000
 
     -- // Check Distance and if its on the screen // --
-    if not onScreen and ui.IsNormalArrow ~= true then
-        if ui.Hidden ~= true then
-            ui.Hidden = true;
-            ui.SetVisible(false);
-        end
-
-        return pos, onScreen, false;
+    if skipOnScreen ~= true and onScreen == false then
+       if ui.Hidden ~= true then
+           ui.Hidden = true;
+           ui.SetVisible(false);
+       end
+    
+       return pos, onScreen, false;
     end
 
     if distanceFromChar > maxDist then
@@ -1393,20 +1393,22 @@ Library.Connections.Add(RunService.RenderStepped:Connect(function(dt)
                     local arctan = math.atan2(direction.Y, direction.X);
                     local angle = math.deg(arctan) + 90;
 
-                    print("on screen:", onScreen)
+                    print("isVisible:", onScreen == false)
                     arrowTable.UpdateArrow(
                         angle + 180 * (IsInverted and 0 or 1), 
                         UDim2.new(
                             0, centerPos.X + (arrowTable.Settings.CenterOffset * math.cos(arctan) * invert), 
                             0, centerPos.Y + (arrowTable.Settings.CenterOffset * math.sin(arctan) * invert)
                         ),
-                        (not onScreen)
+                        onScreen == false
                     );
      
                     arrowTable.Update({ Color = Library.Rainbow.Enabled and Library.Rainbow.Color or arrowTable.Settings.Color }, false);
                 else
                     arrowTable.Update({ Visible = false }, false);
                 end;
+                  
+                return;
             end;
 
             -- // Update // --
