@@ -1371,7 +1371,6 @@ Library.Connections.Add(RunService.RenderStepped:Connect(function(dt)
                     local arrowPosPixel = Vector2.new(arrowTable.ArrowInstance.Position.X.Scale, arrowTable.ArrowInstance.Position.Y.Scale) * 1000;
      
                     pos, onScreen, canContinue = checkVisibility(arrowTable, arrowTable.Settings.Model);
-                    print(onScreen)
                     local partPos = Vector2.new(pos.X, pos.Y);
      
                     local IsInverted = pos.Z <= 0;
@@ -1380,7 +1379,8 @@ Library.Connections.Add(RunService.RenderStepped:Connect(function(dt)
                     local direction = (partPos - centerPos);
                     local arctan = math.atan2(direction.Y, direction.X);
                     local angle = math.deg(arctan) + 90;
-     
+
+                    print(not onScreen and arrowTable.Settings.Visible == true)
                     arrowTable.UpdateArrow(
                         angle + 180 * (IsInverted and 0 or 1), 
                         UDim2.new(
