@@ -913,6 +913,10 @@ function Library.ESP.Highlight(args)
             HighlightTable.TracerInstance.Update(args.Tracer, updateVariables); 
         end;
 
+        if HighlightTable.ArrowInstance ~= nil and typeof(args.Arrow) == "table" then 
+            HighlightTable.ArrowInstance.Update(args.Arrow, updateVariables); 
+        end;
+
         local settings = HighlightTable.Settings; HighlightTable.Settings.Tracer = nil;
         args = Library.Validate(args, settings);
 
@@ -1066,6 +1070,11 @@ function Library.ESP.Adornment(args)
         if AdornmentTable.TracerInstance ~= nil and typeof(args.Tracer) == "table" then 
             AdornmentTable.TracerInstance.Update(args.Tracer, updateVariables); 
         end;
+
+        if AdornmentTable.ArrowInstance ~= nil and typeof(args.Arrow) == "table" then 
+            AdornmentTable.ArrowInstance.Update(args.Arrow, updateVariables); 
+        end;
+
         local settings = AdornmentTable.Settings; AdornmentTable.Settings.Tracer = nil;
         args = Library.Validate(args, settings);
 
@@ -1183,6 +1192,11 @@ function Library.ESP.Outline(args)
         if OutlineTable.TracerInstance ~= nil and typeof(args.Tracer) == "table" then 
             OutlineTable.TracerInstance.Update(args.Tracer, updateVariables); 
         end;
+
+        if OutlineTable.ArrowInstance ~= nil and typeof(args.Arrow) == "table" then 
+            OutlineTable.ArrowInstance.Update(args.Arrow, updateVariables); 
+        end;
+
         local settings = OutlineTable.Settings; OutlineTable.Settings.Tracer = nil;
         args = Library.Validate(args, settings);
 
