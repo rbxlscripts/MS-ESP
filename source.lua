@@ -1390,7 +1390,6 @@ Library.Connections.Add(RunService.RenderStepped:Connect(function(dt)
                     local arctan = math.atan2(direction.Y, direction.X);
                     local angle = math.deg(arctan) + 90;
 
-                    print("isVisible:", onScreen == false)
                     arrowTable.UpdateArrow(
                         angle + 180 * (IsInverted and 0 or 1), 
                         UDim2.new(
