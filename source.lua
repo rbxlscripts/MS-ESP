@@ -49,6 +49,8 @@ local Library = {
     -- // Storage // --
     ESP = {
         Billboards = {},
+        Arrows = {},
+
         Adornments = {},
         Highlights = {},
         Outlines = {},
@@ -158,14 +160,14 @@ end
 updateVariables();
 
 -- // Functions // --
-local function getFolder(name, parent, backup)
+local function getFolder(name, parent, backup, typeOfInstance)
     assert(typeof(name) == "string", "Argument #1 must be a string.");
     assert(typeof(parent) == "Instance", "Argument #2 must be an Instance.");
 
     Library.Debug("Creating folder '" .. name .. "'.")
     local folder = parent:FindFirstChild(name);
     if folder == nil then
-        folder = Instance.new("Folder");
+        folder = Instance.new(if typeOfInstance == nil then "Folder" else tostring(typeOfInstance));
         folder.Name = name;
 
         local parented = pcall(function() folder.Parent = CoreGui; end);
@@ -253,6 +255,14 @@ local function deleteTracer(tracerInstance)
     end
 end
 
+local function getArrowTable(uiTable)
+    if uiTable.IsNormalArrow == true then
+        return uiTable;
+    end
+
+    return uiTable.ArrowInstance;
+end
+
 local function createDeleteFunction(TableName, TableIndex, Table)
     local function delete()
         if typeof(Library.ESP[TableName]) ~= "table" then
@@ -312,13 +322,22 @@ local function createDeleteFunction(TableName, TableIndex, Table)
                     Library.Debug("Tracer deleted!");
                 else
                     if uiTable.TracerInstance ~= nil then
-                        uiTable.TracerInstance.Destroy();
+                        uiTable.TracerInstance:Destroy();
                     end
                 end
             end);
             if not successTracer then
                 Library.Warn("Failed to delete tracer.", errorMessageTracer);
             end
+
+            -- // Remove Arrow // --
+            local arrowTable = getArrowTable(uiTable);
+            if arrowTable ~= nil and arrowTable ~= uiTable then
+                arrowTable.Destroy()
+            end
+            --if uiTable.ArrowInstance ~= nil and typeof(uiTable.ArrowInstance.Destroy) == "function" then
+            --    uiTable.ArrowInstance.Destroy()
+            --end
 
             -- // Remove from Library // --
             uiTable.Deleted = true;
@@ -349,6 +368,8 @@ Library.Folders.Adornments = getFolder("__ADORNMENTS_FOLDER", Library.Folders.Ma
 Library.Folders.Highlights = getFolder("__HIGHLIGHTS_FOLDER", Library.Folders.Main);
 Library.Folders.Outlines = getFolder("__OUTLINES_FOLDER", Library.Folders.Main);
 
+Library.Folders.GUI = getFolder("__GUI", CoreGui, localPlayer.PlayerGui, "ScreenGui");
+
 -- // ESP Templates // --
 local Templates = {
     Billboard = {
@@ -358,6 +379,18 @@ local Templates = {
         MaxDistance = 5000,
         StudsOffset = Vector3.new(),
         TextSize = 16,
+
+        Color = Color3.new(),
+        WasCreatedWithDifferentESP = false,
+
+        OnDestroy = nil,
+    },
+
+    Arrow = {
+        Model = nil,
+        Visible = true,
+        MaxDistance = 5000,
+        CenterOffset = 300,
 
         Color = Color3.new(),
         WasCreatedWithDifferentESP = false,
@@ -616,6 +649,95 @@ function Library.ESP.Billboard(args)
     return BillboardTable;
 end
 
+function Library.ESP.Arrow(args)
+    assert(typeof(args) == "table", "args must be a table.");
+    args = Library.Validate(args, Templates.Arrow);
+    assert(typeof(args.Model) == "Instance", "args.Model must be an Instance.");
+
+    Library.Debug("Creating Arrow '" .. tostring(args.Name) .. "'...")
+    -- // Instances // --
+    local Arrow = createInstance("ImageLabel", {
+        Parent = Library.Folders.GUI,
+
+        Visible = true,
+
+        AnchorPoint = Vector2.new(0.5, 0.5),
+        BackgroundTransparency = 1,
+        BorderSizePixel = 0,
+
+        Image = "http://www.roblox.com/asset/?id=16368985219",
+        ImageColor3 = args.Color,
+
+        Size = UDim2.new(0, 48, 0, 48),
+        SizeConstraint = Enum.SizeConstraint.RelativeYY
+    });
+
+    local TableName = "Arrows";
+    local TableIndex = randomString();
+
+    local ArrowTable = {
+        TableIndex = TableIndex, TableName = TableName,
+
+        Settings = args,
+        UIElements = { Arrow },
+        ArrowInstance = Arrow,
+        IsNormalArrow = true
+    };
+
+    ArrowTable.Connections = {
+        Library.Connections.Add(args.Model.AncestryChanged:Connect(function(_, parent)
+            if not parent then
+                ArrowTable.Destroy();
+            end
+        end))
+    };
+
+    -- // Delete Handler // --
+    ArrowTable.Deleted = false;
+    ArrowTable.Destroy = createDeleteFunction(TableName, TableIndex, ArrowTable);
+    ArrowTable.OnDestroy = args.OnDestroy;
+    --ArrowTable.Delete = ArrowTable.Destroy;
+    
+    ArrowTable.DistancePart = findPrimaryPart(ArrowTable.Settings.Model);
+    ArrowTable.Update = function(args, updateVariables)
+        if ArrowTable.Deleted or not Arrow then return; end
+        args = Library.Validate(args, ArrowTable.Settings);
+
+        local _Color = typeof(args.Color) == "Color3" and args.Color or ArrowTable.Settings.Color;
+        Arrow.ImageColor3 = _Color;
+        
+        if updateVariables ~= false then
+            ArrowTable.Settings.Color = _Color;
+
+            ArrowTable.Settings.MaxDistance = typeof(args.MaxDistance) == "number" and args.MaxDistance or ArrowTable.Settings.MaxDistance;
+        end
+    end;
+    ArrowTable.SetColor = ArrowTable.Update;
+
+    ArrowTable.SetVisible = function(visible)
+        if ArrowTable.Deleted or not Arrow then return; end
+
+        ArrowTable.Settings.Visible = if typeof(visible) == "boolean" then visible else ArrowTable.Settings.Visible;
+        Arrow.Visible = ArrowTable.Settings.Visible;
+    end;
+
+    ArrowTable.UpdateArrow = function(rotation, position, visible)
+        if ArrowTable.Deleted or not Arrow then return; end
+
+        ArrowTable.Settings.Rotation = if typeof(rotation) == "number" then rotation else ArrowTable.Settings.Rotation;
+        ArrowTable.Settings.Position = if typeof(position) == "UDim2" then position else ArrowTable.Settings.Position;
+        ArrowTable.Settings.Visible = if typeof(visible) == "boolean" then visible else ArrowTable.Settings.Visible;
+
+        Arrow.Visible = ArrowTable.Settings.Visible;
+        Arrow.Position = ArrowTable.Settings.Position;
+        Arrow.Rotation = ArrowTable.Settings.Rotation;
+    end;
+
+    -- // Return // --
+    Library.ESP[TableName][TableIndex] = ArrowTable;
+    return ArrowTable;
+end
+
 function Library.ESP.Tracer(args)
     if DrawingLib.noDrawing == true then
         return {
@@ -724,6 +846,14 @@ function Library.ESP.Highlight(args)
         args.Tracer.Enabled = typeof(args.Tracer.Enabled) ~= "boolean" and false or args.Tracer.Enabled; 
         args.Tracer.Model = args.Model;
     end
+
+    -- // Arrow // --
+    do 
+        args.Arrow = Library.Validate(args.Arrow, Templates.Arrow); 
+        args.Arrow.Enabled = typeof(args.Arrow.Enabled) ~= "boolean" and false or args.Arrow.Enabled; 
+        args.Arrow.Model = args.Model;
+    end
+
     assert(typeof(args.Model) == "Instance", "args.Model must be an Instance.");
 
     Library.Debug("Creating Highlight '" .. tostring(args.Name) .. "'...")
@@ -757,7 +887,8 @@ function Library.ESP.Highlight(args)
         Settings = args,
         UIElements = { Highlight },
         TracerInstance = args.Tracer.Enabled == true and Library.ESP.Tracer(args.Tracer) or nil,
-        BillboardInstance = BillboardTable
+        BillboardInstance = BillboardTable,
+        ArrowInstance = args.Arrow.Enabled == true and Library.ESP.Arrow(args.Arrow) or nil
     }; 
     HighlightTable.Connections = {
         Library.Connections.Add(args.Model.AncestryChanged:Connect(function(_, parent)
@@ -846,6 +977,14 @@ function Library.ESP.Adornment(args)
         args.Tracer.Enabled = typeof(args.Tracer.Enabled) ~= "boolean" and false or args.Tracer.Enabled; 
         args.Tracer.Model = args.Model;
     end
+
+    -- // Arrow // --
+    do 
+        args.Arrow = Library.Validate(args.Arrow, Templates.Arrow); 
+        args.Arrow.Enabled = typeof(args.Arrow.Enabled) ~= "boolean" and false or args.Arrow.Enabled; 
+        args.Arrow.Model = args.Model;
+    end
+
     assert(typeof(args.Model) == "Instance", "args.Model must be an Instance.");
 
     args.Type = string.lower(args.Type);
@@ -902,7 +1041,8 @@ function Library.ESP.Adornment(args)
         Settings = args,
         UIElements = { Adornment },
         TracerInstance = args.Tracer.Enabled == true and Library.ESP.Tracer(args.Tracer) or nil,
-        BillboardInstance = BillboardTable
+        BillboardInstance = BillboardTable,
+        ArrowInstance = args.Arrow.Enabled == true and Library.ESP.Arrow(args.Arrow) or nil
     };
     AdornmentTable.Connections = {
         Library.Connections.Add(args.Model.AncestryChanged:Connect(function(_, parent)
@@ -977,6 +1117,14 @@ function Library.ESP.Outline(args)
         args.Tracer.Enabled = typeof(args.Tracer.Enabled) ~= "boolean" and false or args.Tracer.Enabled; 
         args.Tracer.Model = args.Model;
     end
+
+    -- // Arrow // --
+    do 
+        args.Arrow = Library.Validate(args.Arrow, Templates.Arrow); 
+        args.Arrow.Enabled = typeof(args.Arrow.Enabled) ~= "boolean" and false or args.Arrow.Enabled; 
+        args.Arrow.Model = args.Model;
+    end
+
     assert(typeof(args.Model) == "Instance", "args.Model must be an Instance.");
 
     Library.Debug("Creating Outline '" .. tostring(args.Name) .. "'...")
@@ -1009,7 +1157,8 @@ function Library.ESP.Outline(args)
         Settings = args,
         UIElements = { Adornment },
         TracerInstance = args.Tracer.Enabled == true and Library.ESP.Tracer(args.Tracer) or nil,
-        BillboardInstance = BillboardTable
+        BillboardInstance = BillboardTable,
+        ArrowInstance = args.Arrow.Enabled == true and Library.ESP.Arrow(args.Arrow) or nil
     };
 
     OutlineTable.Connections = {
@@ -1181,6 +1330,40 @@ Library.Connections.Add(RunService.RenderStepped:Connect(function(dt)
                         end;
                     end
                 end
+            end
+
+            -- // Update Arrow // --
+            local arrowTable = getArrowTable(ui);
+            print(arrowTable == ui, ui, arrowTable)
+            if arrowTable then
+                local screenSize = camera.ViewportSize;
+                local centerPos = Vector2.new(screenSize.X / 2, screenSize.Y/2);
+                -- use aspect to make oval circle (it's more accurate)
+                -- local aspectRatioX = screenSize.X / screenSize.Y;
+                -- local aspectRatioY = screenSize.Y / screenSize.X;
+                
+                local arrowPosPixel = Vector2.new(arrowTable.ArrowInstance.Position.X.Scale, arrowTable.ArrowInstance.Position.Y.Scale) * 1000;
+
+                pos, onScreen, canContinue = checkVisibility(ui, arrowTable.DistancePart);
+                local partPos = Vector2.new(pos.X, pos.Y);
+
+                local IsInverted = pos.Z <= 0;
+                local invert = (IsInverted and -1 or 1);
+                    
+                local direction = (partPos - centerPos);
+                local arctan = math.atan2(direction.Y, direction.X);
+                local angle = math.deg(arctan) + 90;
+
+                arrowTable.UpdateArrow(
+                    angle + 180 * (IsInverted and 0 or 1), 
+                    UDim2.new(
+                        0, centerPos.X + (arrowTable.Settings.CenterOffset * math.cos(arctan) * invert), 
+                        0, centerPos.Y + (arrowTable.Settings.CenterOffset * math.sin(arctan) * invert)
+                    ),
+                    not onScreen
+                );
+
+                arrowTable.Update({ Color = Library.Rainbow.Enabled and Library.Rainbow.Color or arrowTable.Settings.Color }, false);
             end
 
             -- // Update // --
