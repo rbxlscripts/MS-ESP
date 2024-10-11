@@ -1350,7 +1350,6 @@ Library.Connections.Add(RunService.RenderStepped:Connect(function(dt)
 
             -- // Update Arrow // --
             local arrowTable = getArrowTable(ui);
-            print(arrowTable == ui, ui, arrowTable)
             if arrowTable then
                 if arrowTable.Settings.Visible == true then
                     local screenSize = camera.ViewportSize;
