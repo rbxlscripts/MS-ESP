@@ -711,7 +711,6 @@ function Library.ESP.Arrow(args)
     ArrowTable.OnDestroy = args.OnDestroy;
     --ArrowTable.Delete = ArrowTable.Destroy;
     
-    ArrowTable.DistancePart = findPrimaryPart(ArrowTable.Settings.Model);
     ArrowTable.Update = function(args, updateVariables)
         if ArrowTable.Deleted or not Arrow then return; end
         args = Library.Validate(args, ArrowTable.Settings);
@@ -1332,7 +1331,7 @@ Library.Connections.Add(RunService.RenderStepped:Connect(function(dt)
             local tracerTable = getTracerTable(ui);
             if tracerTable ~= nil then
                 if tracerTable.Deleted ~= true and tracerTable.TracerDeleted ~= true and tracerTable.TracerInstance ~= nil and Library.Tracers.Enabled then
-                    pos, onScreen, canContinue = checkVisibility(ui, tracerTable.DistancePart)
+                    pos, onScreen, canContinue = checkVisibility(tracerTable, tracerTable.DistancePart)
 
                     if onScreen and tracerTable.Settings.Visible then
                         if tracerTable.Settings.From == "mouse" then
@@ -1374,7 +1373,8 @@ Library.Connections.Add(RunService.RenderStepped:Connect(function(dt)
                         
                         local arrowPosPixel = Vector2.new(arrowTable.ArrowInstance.Position.X.Scale, arrowTable.ArrowInstance.Position.Y.Scale) * 1000;
     
-                        pos, onScreen, canContinue = checkVisibility(ui, arrowTable.DistancePart);
+                        pos, onScreen, canContinue = checkVisibility(arrowTable, arrowTable.Settings.Model);
+                        print(onScreen)
                         local partPos = Vector2.new(pos.X, pos.Y);
     
                         local IsInverted = pos.Z <= 0;
