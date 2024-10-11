@@ -16,7 +16,7 @@
 local global = getgenv; -- function() return getgenvFunc and getgenvFunc() or _G; end
 
 if global().mstudio45 and global().mstudio45.ESPLibrary then
-   -- TEMP: return global().mstudio45.ESPLibrary;
+   return global().mstudio45.ESPLibrary;
 end
 
 local __DEBUG = false;
