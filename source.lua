@@ -408,6 +408,7 @@ local Templates = {
         Color = Color3.new(),
         WasCreatedWithDifferentESP = false,
 
+        FlipOnScreenCheck = false,
         OnDestroy = nil,
     },
 
@@ -1380,14 +1381,15 @@ Library.Connections.Add(RunService.RenderStepped:Connect(function(dt)
                     local arctan = math.atan2(direction.Y, direction.X);
                     local angle = math.deg(arctan) + 90;
 
-                    print(not onScreen and arrowTable.Settings.Visible == true)
+                    local isVisible = (if arrowTable.Settings.FlipOnScreenCheck then (onScreen) else (not onScreen)) and arrowTable.Settings.Visible == true
+                    print(isVisible, onScreen, arrowTable.Settings.Visible == true)
                     arrowTable.UpdateArrow(
                         angle + 180 * (IsInverted and 0 or 1), 
                         UDim2.new(
                             0, centerPos.X + (arrowTable.Settings.CenterOffset * math.cos(arctan) * invert), 
                             0, centerPos.Y + (arrowTable.Settings.CenterOffset * math.sin(arctan) * invert)
                         ),
-                        not onScreen and arrowTable.Settings.Visible == true
+                        isVisible
                     );
      
                     arrowTable.Update({ Color = Library.Rainbow.Enabled and Library.Rainbow.Color or arrowTable.Settings.Color }, false);
