@@ -382,6 +382,7 @@ Library.Folders.Highlights = getFolder("__HIGHLIGHTS_FOLDER", Library.Folders.Ma
 Library.Folders.Outlines = getFolder("__OUTLINES_FOLDER", Library.Folders.Main);
 
 Library.Folders.GUI = getFolder("__GUI", CoreGui, localPlayer.PlayerGui, "ScreenGui");
+Library.Folders.GUI.IgnoreGuiInset = true;
 
 -- // ESP Templates // --
 local Templates = {
