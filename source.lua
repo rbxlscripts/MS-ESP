@@ -1315,6 +1315,8 @@ local function checkVisibility(ui, root, skipOnScreen)
 
     return pos, onScreen, true;
 end
+                                                                                                            
+
 
 Library.Connections.Add(workspace:GetPropertyChangedSignal("CurrentCamera"):Connect(function()
     if workspace.CurrentCamera then camera = workspace.CurrentCamera; end;
@@ -1328,111 +1330,112 @@ end), "CharacterUpdate", true);
 Library.Connections.Add(RunService.RenderStepped:Connect(function(dt)
     if not (character and rootPart and camera) then return; end;
 
-    for uiName, uiTable in pairs(Library.ESP) do
-        if typeof(uiTable) ~= "table" then continue; end
+    -- // Update Tracers // --
+    for _, tracerTable in pairs(Library.ESP.Tracers) do 
+        if not checkUI(tracerTable, "Tracers", tracerTable.TableIndex) then continue; end
 
+        if tracerTable.Deleted ~= true and tracerTable.TracerDeleted ~= true and tracerTable.TracerInstance ~= nil and Library.Tracers.Enabled then
+            local pos, onScreen, canContinue = checkVisibility(tracerTable, tracerTable.DistancePart)
+
+            if onScreen and tracerTable.Settings.Visible then
+                if tracerTable.Settings.From == "mouse" then
+                    local mousePos = UserInputService:GetMouseLocation();
+                    tracerTable.TracerInstance.From = Vector2.new(mousePos.X, mousePos.Y);
+                elseif tracerTable.Settings.From == "top" then
+                    tracerTable.TracerInstance.From = Vector2.new(camera.ViewportSize.X / 2, 0);
+                elseif tracerTable.Settings.From == "center" then
+                    tracerTable.TracerInstance.From = Vector2.new(camera.ViewportSize.X / 2, camera.ViewportSize.Y / 2);
+                else
+                    tracerTable.TracerInstance.From = Vector2.new(camera.ViewportSize.X / 2, camera.ViewportSize.Y);
+                end
+
+                tracerTable.TracerInstance.To = Vector2.new(pos.X, pos.Y);
+                tracerTable.Update({ Color = Library.Rainbow.Enabled and Library.Rainbow.Color or tracerTable.Settings.Color }, false);
+            else
+                tracerTable.TracerInstance.Visible = false;
+            end;
+        else
+            if tracerTable.Deleted ~= true then
+                tracerTable.Deleted = true;
+                if tracerTable.TracerInstance ~= nil then
+                    tracerTable.TracerInstance.Visible = false;
+                end;
+            end;
+        end;
+    end;        
+    
+    -- // Update Arrows // --
+    for _, arrowTable in pairs(Library.ESP.Arrows) do 
+        if not checkUI(arrowTable, "Arrows", arrowTable.TableIndex) then continue; end
+
+        if Library.Arrows.Enabled == true and arrowTable.Settings.Visible == true then
+            local screenSize = camera.ViewportSize;
+            local centerPos = Vector2.new(screenSize.X / 2, screenSize.Y/2);
+                                                                                                                                        
+            -- use aspect to make oval circle (it's more accurate)
+            -- local aspectRatioX = screenSize.X / screenSize.Y;
+            -- local aspectRatioY = screenSize.Y / screenSize.X;
+            local arrowPosPixel = Vector2.new(arrowTable.ArrowInstance.Position.X.Scale, arrowTable.ArrowInstance.Position.Y.Scale) * 1000;
+
+            local pos, onScreen, canContinue = checkVisibility(arrowTable, arrowTable.Settings.Model, true);
+            local partPos = Vector2.new(pos.X, pos.Y);
+
+            local IsInverted = pos.Z <= 0;
+            local invert = (IsInverted and -1 or 1);
+                
+            local direction = (partPos - centerPos);
+            local arctan = math.atan2(direction.Y, direction.X);
+            local angle = math.deg(arctan) + 90;
+            local distance = (arrowTable.Settings.CenterOffset * 0.001) * screenSize.Y;
+
+            arrowTable.UpdateArrow(
+                angle + 180 * (IsInverted and 0 or 1), 
+                UDim2.new(
+                    0, centerPos.X + (distance * math.cos(arctan) * invert), 
+                    0, centerPos.Y + (distance * math.sin(arctan) * invert)
+                )
+            );
+            arrowTable.ArrowInstance.Visible = (onScreen == false);
+
+            arrowTable.Update({ Color = Library.Rainbow.Enabled and Library.Rainbow.Color or arrowTable.Settings.Color }, false);
+        else
+            arrowTable.ArrowInstance.Visible = false;
+        end;
+    end;  
+                                                                                                                                       
+    for uiName, uiTable in pairs(Library.ESP) do
+        if typeof(uiTable) ~= "table" or uiName == "Tracers" or uiName == "Arrows" then continue; end
+         
         for _, ui in pairs(uiTable) do
             if not checkUI(ui, uiName, ui.TableIndex) then continue; end
                                                                                                                                                          
             local pos, onScreen, canContinue = checkVisibility(ui, ui.Settings.Model);
-            if canContinue then 
-                if ui.Hidden == true then ui.Hidden = nil; ui.SetVisible(true); end
-                
-                if uiName == "Billboards" then
-                    ui.SetDistanceText(ui.GetDistance());
-    
-                    if ui.WasCreatedWithDifferentESP == true then
-                        ui.Update({ Color = Library.Rainbow.Enabled and Library.Rainbow.Color or ui.Settings.Color }, false);
-                    end
-                elseif uiName == "Adornments" then
-                    ui.Update({ 
-                        Color        = Library.Rainbow.Enabled and Library.Rainbow.Color or ui.Settings.Color, 
-                        TextColor    = Library.Rainbow.Enabled and Library.Rainbow.Color or ui.Settings.TextColor
-                    }, false);
-                elseif uiName == "Highlights" then
-                    ui.Update({ 
-                        FillColor    = Library.Rainbow.Enabled and Library.Rainbow.Color or ui.Settings.FillColor, 
-                        OutlineColor = Library.Rainbow.Enabled and Library.Rainbow.Color or ui.Settings.OutlineColor, 
-                        TextColor    = Library.Rainbow.Enabled and Library.Rainbow.Color or ui.Settings.TextColor
-                    }, false);
-                elseif uiName == "Outlines" then
-                    ui.Update({ 
-                        SurfaceColor = Library.Rainbow.Enabled and Library.Rainbow.Color or ui.Settings.SurfaceColor, 
-                        OutlineColor = Library.Rainbow.Enabled and Library.Rainbow.Color or ui.Settings.OutlineColor, 
-                        TextColor    = Library.Rainbow.Enabled and Library.Rainbow.Color or ui.Settings.TextColor
-                    }, false);
+            if not canContinue then continue end
+            if ui.Hidden == true then ui.Hidden = nil; ui.SetVisible(true); end
+            
+            if uiName == "Billboards" then
+                ui.SetDistanceText(ui.GetDistance());
+
+                if ui.WasCreatedWithDifferentESP == true then
+                    ui.Update({ Color = Library.Rainbow.Enabled and Library.Rainbow.Color or ui.Settings.Color }, false);
                 end
-            end
-
-            -- // Update Tracer // --
-            local tracerTable = getTracerTable(ui);
-            if tracerTable ~= nil then
-                if tracerTable.Deleted ~= true and tracerTable.TracerDeleted ~= true and tracerTable.TracerInstance ~= nil and Library.Tracers.Enabled then
-                    pos, onScreen, canContinue = checkVisibility(tracerTable, tracerTable.DistancePart)
-
-                    if onScreen and tracerTable.Settings.Visible then
-                        if tracerTable.Settings.From == "mouse" then
-                            local mousePos = UserInputService:GetMouseLocation();
-                            tracerTable.TracerInstance.From = Vector2.new(mousePos.X, mousePos.Y);
-                        elseif tracerTable.Settings.From == "top" then
-                            tracerTable.TracerInstance.From = Vector2.new(camera.ViewportSize.X / 2, 0);
-                        elseif tracerTable.Settings.From == "center" then
-                            tracerTable.TracerInstance.From = Vector2.new(camera.ViewportSize.X / 2, camera.ViewportSize.Y / 2);
-                        else
-                            tracerTable.TracerInstance.From = Vector2.new(camera.ViewportSize.X / 2, camera.ViewportSize.Y);
-                        end
-        
-                        tracerTable.TracerInstance.To = Vector2.new(pos.X, pos.Y);
-                        tracerTable.Update({ Color = Library.Rainbow.Enabled and Library.Rainbow.Color or tracerTable.Settings.Color }, false);
-                    else
-                        tracerTable.TracerInstance.Visible = false;
-                    end;
-                else
-                    if tracerTable.Deleted ~= true then
-                        tracerTable.Deleted = true;
-                        if tracerTable.TracerInstance ~= nil then
-                            tracerTable.TracerInstance.Visible = false;
-                        end;
-                    end;
-                end;
-            end;
-
-            -- // Update Arrow // --
-            local arrowTable = getArrowTable(ui);
-            if arrowTable then
-                if Library.Arrows.Enabled == true and arrowTable.Settings.Visible == true then
-                    local screenSize = camera.ViewportSize;
-                    local centerPos = Vector2.new(screenSize.X / 2, screenSize.Y/2);
-                                                                                                                                                
-                    -- use aspect to make oval circle (it's more accurate)
-                    -- local aspectRatioX = screenSize.X / screenSize.Y;
-                    -- local aspectRatioY = screenSize.Y / screenSize.X;
-                    local arrowPosPixel = Vector2.new(arrowTable.ArrowInstance.Position.X.Scale, arrowTable.ArrowInstance.Position.Y.Scale) * 1000;
-     
-                    pos, onScreen, canContinue = checkVisibility(arrowTable, arrowTable.Settings.Model, true);
-                    local partPos = Vector2.new(pos.X, pos.Y);
-     
-                    local IsInverted = pos.Z <= 0;
-                    local invert = (IsInverted and -1 or 1);
-                        
-                    local direction = (partPos - centerPos);
-                    local arctan = math.atan2(direction.Y, direction.X);
-                    local angle = math.deg(arctan) + 90;
-                    local distance = (arrowTable.Settings.CenterOffset * 0.001) * screenSize.Y;
-
-                    arrowTable.UpdateArrow(
-                        angle + 180 * (IsInverted and 0 or 1), 
-                        UDim2.new(
-                            0, centerPos.X + (distance * math.cos(arctan) * invert), 
-                            0, centerPos.Y + (distance * math.sin(arctan) * invert)
-                        )
-                    );
-                    arrowTable.ArrowInstance.Visible = (onScreen == false);
-     
-                    arrowTable.Update({ Color = Library.Rainbow.Enabled and Library.Rainbow.Color or arrowTable.Settings.Color }, false);
-                else
-                    arrowTable.ArrowInstance.Visible = false;
-                end;
+            elseif uiName == "Adornments" then
+                ui.Update({ 
+                    Color        = Library.Rainbow.Enabled and Library.Rainbow.Color or ui.Settings.Color, 
+                    TextColor    = Library.Rainbow.Enabled and Library.Rainbow.Color or ui.Settings.TextColor
+                }, false);
+            elseif uiName == "Highlights" then
+                ui.Update({ 
+                    FillColor    = Library.Rainbow.Enabled and Library.Rainbow.Color or ui.Settings.FillColor, 
+                    OutlineColor = Library.Rainbow.Enabled and Library.Rainbow.Color or ui.Settings.OutlineColor, 
+                    TextColor    = Library.Rainbow.Enabled and Library.Rainbow.Color or ui.Settings.TextColor
+                }, false);
+            elseif uiName == "Outlines" then
+                ui.Update({ 
+                    SurfaceColor = Library.Rainbow.Enabled and Library.Rainbow.Color or ui.Settings.SurfaceColor, 
+                    OutlineColor = Library.Rainbow.Enabled and Library.Rainbow.Color or ui.Settings.OutlineColor, 
+                    TextColor    = Library.Rainbow.Enabled and Library.Rainbow.Color or ui.Settings.TextColor
+                }, false);
             end;
         end
     end
