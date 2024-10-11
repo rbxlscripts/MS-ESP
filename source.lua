@@ -1292,13 +1292,22 @@ local function checkUI(uiTable, TableName, TableIndex)
     return true;
 end
 
-local function checkVisibility(ui, root)
+local function checkVisibility(ui, root, skipInvis)
     local pos, onScreen = worldToViewport(root:GetPivot().Position);
     local distanceFromChar = distanceFromCharacter(root);
     local maxDist = tonumber(ui.Settings.MaxDistance) or 5000
 
     -- // Check Distance and if its on the screen // --
-    if (ui.IsNormalArrow ~= true and not onScreen) or distanceFromChar > maxDist then
+    if not onScreen and skipInvis ~= true then
+        if ui.Hidden ~= true then
+            ui.Hidden = true;
+            ui.SetVisible(false);
+        end
+
+        return pos, onScreen, false;
+    end
+
+    if distanceFromChar > maxDist then
         if ui.Hidden ~= true then
             ui.Hidden = true;
             ui.SetVisible(false);
@@ -1374,7 +1383,7 @@ Library.Connections.Add(RunService.RenderStepped:Connect(function(dt)
                     
                     local arrowPosPixel = Vector2.new(arrowTable.ArrowInstance.Position.X.Scale, arrowTable.ArrowInstance.Position.Y.Scale) * 1000;
      
-                    pos, onScreen, canContinue = checkVisibility(arrowTable, arrowTable.Settings.Model);
+                    pos, onScreen, canContinue = checkVisibility(arrowTable, arrowTable.Settings.Model, true);
                     local partPos = Vector2.new(pos.X, pos.Y);
      
                     local IsInverted = pos.Z <= 0;
