@@ -1384,7 +1384,7 @@ Library.Connections.Add(RunService.RenderStepped:Connect(function(dt)
             end
 
             -- // Update // --
-            local pos, onScreen, canContinue = checkVisibility(ui, ui.Settings.Model)
+            pos, onScreen, canContinue = checkVisibility(ui, ui.Settings.Model)
             if not canContinue then continue; end
             if ui.Hidden == true then ui.Hidden = nil; ui.SetVisible(true); end
             
