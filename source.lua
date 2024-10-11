@@ -724,7 +724,7 @@ function Library.ESP.Arrow(args)
         if updateVariables ~= false then
             ArrowTable.Settings.Color = _Color;
             ArrowTable.Settings.CenterOffset = typeof(args.CenterOffset) == "number" and args.CenterOffset or ArrowTable.Settings.CenterOffset;
-            ArrowTable.Settings.Visible = typeof(args.Visible) == "boolean" and args.Visible or ArrowTable.Settings.Visible;
+            ArrowTable.Settings.Visible = _Visible;
 
             ArrowTable.Settings.MaxDistance = typeof(args.MaxDistance) == "number" and args.MaxDistance or ArrowTable.Settings.MaxDistance;
         end
@@ -738,15 +738,14 @@ function Library.ESP.Arrow(args)
         Arrow.Visible = ArrowTable.Settings.Visible;
     end;
 
-    ArrowTable.UpdateArrow = function(rotation, position, visible)
+    ArrowTable.UpdateArrow = function(rotation, position)
         if ArrowTable.Deleted or not Arrow then return; end
 
         ArrowTable.Settings.Rotation = if typeof(rotation) == "number" then rotation else ArrowTable.Settings.Rotation;
         ArrowTable.Settings.Position = if typeof(position) == "UDim2" then position else ArrowTable.Settings.Position;
 
-        Arrow.Visible = (if typeof(visible) == "boolean" then visible else Arrow.Visible);
-        Arrow.Position = ArrowTable.Settings.Position;
-        Arrow.Rotation = ArrowTable.Settings.Rotation;
+        Arrow.Position = ArrowTable.Settings.Position or Arrow.Position;
+        Arrow.Rotation = ArrowTable.Settings.Rotation or Arrow.Rotation;
     end;
 
     -- // Return // --
@@ -1399,9 +1398,9 @@ Library.Connections.Add(RunService.RenderStepped:Connect(function(dt)
                         UDim2.new(
                             0, centerPos.X + (arrowTable.Settings.CenterOffset * math.cos(arctan) * invert), 
                             0, centerPos.Y + (arrowTable.Settings.CenterOffset * math.sin(arctan) * invert)
-                        ),
-                        onScreen == false
+                        )
                     );
+                    arrowTable.Update({ Visible = (onScreen == false) }, false);
      
                     arrowTable.Update({ Color = Library.Rainbow.Enabled and Library.Rainbow.Color or arrowTable.Settings.Color }, false);
                 else
