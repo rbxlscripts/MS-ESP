@@ -1292,13 +1292,13 @@ local function checkUI(uiTable, TableName, TableIndex)
     return true;
 end
 
-local function checkVisibility(ui, root, skipInvis)
+local function checkVisibility(ui, root)
     local pos, onScreen = worldToViewport(root:GetPivot().Position);
     local distanceFromChar = distanceFromCharacter(root);
     local maxDist = tonumber(ui.Settings.MaxDistance) or 5000
 
     -- // Check Distance and if its on the screen // --
-    if not onScreen and skipInvis ~= true then
+    if not onScreen and ui.IsNormalArrow ~= true then
         if ui.Hidden ~= true then
             ui.Hidden = true;
             ui.SetVisible(false);
@@ -1374,13 +1374,13 @@ Library.Connections.Add(RunService.RenderStepped:Connect(function(dt)
             -- // Update Arrow // --
             local arrowTable = getArrowTable(ui);
             if arrowTable then
-                if Library.Arrows.Enabled == true then
+                if Library.Arrows.Enabled == true and arrowTable.Settings.Visible == true then
                     local screenSize = camera.ViewportSize;
                     local centerPos = Vector2.new(screenSize.X / 2, screenSize.Y/2);
+                                                                                                                                                
                     -- use aspect to make oval circle (it's more accurate)
                     -- local aspectRatioX = screenSize.X / screenSize.Y;
                     -- local aspectRatioY = screenSize.Y / screenSize.X;
-                    
                     local arrowPosPixel = Vector2.new(arrowTable.ArrowInstance.Position.X.Scale, arrowTable.ArrowInstance.Position.Y.Scale) * 1000;
      
                     pos, onScreen, canContinue = checkVisibility(arrowTable, arrowTable.Settings.Model, true);
@@ -1393,15 +1393,14 @@ Library.Connections.Add(RunService.RenderStepped:Connect(function(dt)
                     local arctan = math.atan2(direction.Y, direction.X);
                     local angle = math.deg(arctan) + 90;
 
-                    local isVisible = (if arrowTable.Settings.FlipOnScreenCheck then (onScreen) else (not onScreen)) and arrowTable.Settings.Visible == true
-                    print("is visible:", isVisible, "| on screen:", onScreen, "| vis setting:", arrowTable.Settings.Visible)
+                    print("on screen:", onScreen)
                     arrowTable.UpdateArrow(
                         angle + 180 * (IsInverted and 0 or 1), 
                         UDim2.new(
                             0, centerPos.X + (arrowTable.Settings.CenterOffset * math.cos(arctan) * invert), 
                             0, centerPos.Y + (arrowTable.Settings.CenterOffset * math.sin(arctan) * invert)
                         ),
-                        isVisible
+                        (not onScreen)
                     );
      
                     arrowTable.Update({ Color = Library.Rainbow.Enabled and Library.Rainbow.Color or arrowTable.Settings.Color }, false);
@@ -1411,7 +1410,7 @@ Library.Connections.Add(RunService.RenderStepped:Connect(function(dt)
             end;
 
             -- // Update // --
-            pos, onScreen, canContinue = checkVisibility(ui, ui.Settings.Model, ui.IsNormalArrow) -- BRO GET OUT
+            pos, onScreen, canContinue = checkVisibility(ui, ui.Settings.Model)
             if not canContinue then continue; end
             if ui.Hidden == true then ui.Hidden = nil; ui.SetVisible(true); end
             
