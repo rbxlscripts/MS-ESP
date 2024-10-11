@@ -1389,12 +1389,13 @@ Library.Connections.Add(RunService.RenderStepped:Connect(function(dt)
                     local direction = (partPos - centerPos);
                     local arctan = math.atan2(direction.Y, direction.X);
                     local angle = math.deg(arctan) + 90;
+                    local distance = (arrowTable.Settings.CenterOffset * 0.001) * screenSize.Y;
 
                     arrowTable.UpdateArrow(
                         angle + 180 * (IsInverted and 0 or 1), 
                         UDim2.new(
-                            0, centerPos.X + (arrowTable.Settings.CenterOffset * math.cos(arctan) * invert), 
-                            0, centerPos.Y + (arrowTable.Settings.CenterOffset * math.sin(arctan) * invert)
+                            0, centerPos.X + (distance * math.cos(arctan) * invert), 
+                            0, centerPos.Y + (distance * math.sin(arctan) * invert)
                         )
                     );
                     arrowTable.ArrowInstance.Visible = (onScreen == false);
