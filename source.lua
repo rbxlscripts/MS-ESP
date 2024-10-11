@@ -21,7 +21,7 @@ end
 
 local __DEBUG = false;
 local __LOG = true;
-local __PREFIX = "mstudio45's ESP (v1.0-PLSFUCKINGWORK)"
+local __PREFIX = "mstudio45's ESP (v1.1)"
 
 local Library = {
     -- // Loggin // --
@@ -644,7 +644,7 @@ function Library.ESP.Billboard(args)
         if BillboardTable.Deleted or not Text then return; end
         if typeof(distance) ~= "number" then return; end
 
-        if Library.Distance.Enabled then
+        if Library.Distance.Enabled == true then
             Text.Text = string.format("%s\n<font size=\"%d\">[%s]</font>", BillboardTable.Settings.Name, BillboardTable.Settings.TextSize - 3, distance)
         else
             Text.Text = BillboardTable.Settings.Name
