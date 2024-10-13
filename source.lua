@@ -1335,9 +1335,9 @@ Library.Connections.Add(RunService.RenderStepped:Connect(function(dt)
     for _, tracerTable in pairs(Library.ESP.Tracers) do 
         if not checkUI(tracerTable, "Tracers", tracerTable.TableIndex) then continue; end
 
-        if tracerTable.Deleted ~= true and tracerTable.TracerDeleted ~= true and tracerTable.TracerInstance ~= nil and Library.Tracers.Enabled then
+        if tracerTable.Deleted ~= true and tracerTable.TracerDeleted ~= true and tracerTable.TracerInstance ~= nil then
             local pos, onScreen, canContinue = checkVisibility(tracerTable, tracerTable.DistancePart)
-            if not canContinue then tracerTable.TracerInstance.Visible = false; continue; end
+            if not (Library.Tracers.Enabled and canContinue) then tracerTable.TracerInstance.Visible = false; continue; end
 
             if onScreen and tracerTable.Settings.Visible == true then
                 if tracerTable.Settings.From == "mouse" then
