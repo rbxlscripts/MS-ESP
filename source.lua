@@ -549,8 +549,6 @@ function Library.ESP.Billboard(args)
         ResetOnSpawn = false,
         Enabled = true,
         AlwaysOnTop = true,
-
-        MaxDistance = args.MaxDistance,
                                     
         Size = UDim2.new(0, 200, 0, 50),
         StudsOffset = args.StudsOffset,
