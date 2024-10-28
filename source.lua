@@ -1,14 +1,14 @@
 --[[
 
-         ▄▄▄▄███▄▄▄▄      ▄████████         ▄████████    ▄████████    ▄███████▄ 
-        ▄██▀▀▀███▀▀▀██▄   ███    ███        ███    ███   ███    ███   ███    ███ 
-        ███   ███   ███   ███    █▀         ███    █▀    ███    █▀    ███    ███ 
-        ███   ███   ███   ███              ▄███▄▄▄       ███          ███    ███ 
-        ███   ███   ███ ▀███████████      ▀▀███▀▀▀     ▀███████████ ▀█████████▀  
-        ███   ███   ███          ███        ███    █▄           ███   ███        
-        ███   ███   ███    ▄█    ███        ███    ███    ▄█    ███   ███        
-        ▀█   ███   █▀   ▄████████▀         ██████████  ▄████████▀   ▄████▀      
-                                                                                
+         ▄▄▄▄███▄▄▄▄      ▄████████         ▄████████    ▄████████    ▄███████▄
+        ▄██▀▀▀███▀▀▀██▄   ███    ███        ███    ███   ███    ███   ███    ███
+        ███   ███   ███   ███    █▀         ███    █▀    ███    █▀    ███    ███
+        ███   ███   ███   ███              ▄███▄▄▄       ███          ███    ███
+        ███   ███   ███ ▀███████████      ▀▀███▀▀▀     ▀███████████ ▀█████████▀
+        ███   ███   ███          ███        ███    █▄           ███   ███
+        ███   ███   ███    ▄█    ███        ███    ███    ▄█    ███   ███
+        ▀█   ███   █▀   ▄████████▀         ██████████  ▄████████▀   ▄████▀
+
                         Created by mstudio45 (Discord)
 --]]
 
@@ -26,19 +26,19 @@ local __PREFIX = "mstudio45's ESP"
 local Library = {
     -- // Loggin // --
     Print = function(...)
-        if __LOG ~= true then return end; 
+        if __LOG ~= true then return end;
         print("[💭 INFO] " .. __PREFIX .. ":", ...);
     end,
     Warn = function(...)
-        if __LOG ~= true then return end; 
+        if __LOG ~= true then return end;
         warn("[⚠ WARN] " .. __PREFIX .. ":", ...);
     end,
     Error = function(...)
-        if __LOG ~= true then return end; 
+        if __LOG ~= true then return end;
         error("[🆘 ERROR] " .. __PREFIX .. ":", ...);
     end,
-    Debug = function(...) 
-        if __DEBUG ~= true or __LOG ~= true then return end; 
+    Debug = function(...)
+        if __DEBUG ~= true or __LOG ~= true then return end;
         print("[🛠 DEBUG] " .. __PREFIX .. ":", ...);
     end,
 
@@ -65,7 +65,7 @@ function Library.Connections.Add(connection, keyName, stopWhenKey)
     local totalCount = 0; for _, v in pairs(Library.Connections.List) do totalCount = totalCount + 1; end
     local key = table.find({ "string", "number" }, typeof(keyName)) and tostring(keyName) or totalCount + 1;
 
-    if table.find(Library.Connections.List, key) or typeof(Library.Connections.List[key]) == "RBXScriptConnection" then 
+    if table.find(Library.Connections.List, key) or typeof(Library.Connections.List[key]) == "RBXScriptConnection" then
         Library.Warn(key, "already exists in Connections!")
         if stopWhenKey then return; end
 
@@ -92,10 +92,10 @@ end;
 Library.Adornments = {
     Enabled = true,
 
-    Set = function(bool) 
+    Set = function(bool)
         if typeof(bool) == "boolean" then
             Library.Adornments.Enabled = bool;
-        end; 
+        end;
     end,
     Enable = function() Library.Adornments.Enabled = true; end,
     Disable = function() Library.Adornments.Enabled = false; end,
@@ -105,10 +105,10 @@ Library.Adornments = {
 Library.Billboards = {
     Enabled = true,
 
-    Set = function(bool) 
+    Set = function(bool)
         if typeof(bool) == "boolean" then
             Library.Billboards.Enabled = bool;
-        end; 
+        end;
     end,
     Enable = function() Library.Billboards.Enabled = true; end,
     Disable = function() Library.Billboards.Enabled = false; end,
@@ -118,10 +118,10 @@ Library.Billboards = {
 Library.Highlights = {
     Enabled = true,
 
-    Set = function(bool) 
+    Set = function(bool)
         if typeof(bool) == "boolean" then
             Library.Highlights.Enabled = bool;
-        end; 
+        end;
     end,
     Enable = function() Library.Highlights.Enabled = true; end,
     Disable = function() Library.Highlights.Enabled = false; end,
@@ -131,10 +131,10 @@ Library.Highlights = {
 Library.Outlines = {
     Enabled = true,
 
-    Set = function(bool) 
+    Set = function(bool)
         if typeof(bool) == "boolean" then
             Library.Outlines.Enabled = bool;
-        end; 
+        end;
     end,
     Enable = function() Library.Outlines.Enabled = true; end,
     Disable = function() Library.Outlines.Enabled = false; end,
@@ -144,10 +144,10 @@ Library.Outlines = {
 Library.Distance = {
     Enabled = true,
 
-    Set = function(bool) 
+    Set = function(bool)
         if typeof(bool) == "boolean" then
             Library.Distance.Enabled = bool;
-        end; 
+        end;
     end,
     Enable = function() Library.Distance.Enabled = true; end,
     Disable = function() Library.Distance.Enabled = false; end,
@@ -157,10 +157,10 @@ Library.Distance = {
 Library.Tracers = {
     Enabled = true,
 
-    Set = function(bool) 
+    Set = function(bool)
         if typeof(bool) == "boolean" then
             Library.Tracers.Enabled = bool;
-        end; 
+        end;
     end,
     Enable = function() Library.Tracers.Enabled = true; end,
     Disable = function() Library.Tracers.Enabled = false; end,
@@ -170,10 +170,10 @@ Library.Tracers = {
 Library.Arrows = {
     Enabled = true,
 
-    Set = function(bool) 
+    Set = function(bool)
         if typeof(bool) == "boolean" then
             Library.Arrows.Enabled = bool;
-        end; 
+        end;
     end,
     Enable = function() Library.Arrows.Enabled = true; end,
     Disable = function() Library.Arrows.Enabled = false; end,
@@ -185,10 +185,10 @@ Library.Rainbow = {
     Color = Color3.new(),
     Enabled = false,
 
-    Set = function(bool) 
+    Set = function(bool)
         if typeof(bool) == "boolean" then
             Library.Rainbow.Enabled = bool;
-        end; 
+        end;
     end,
     Enable = function() Library.Rainbow.Enabled = true; end,
     Disable = function() Library.Rainbow.Enabled = false; end,
@@ -378,13 +378,13 @@ local function createDeleteFunction(TableName, TableIndex, Table)
                         Library.Debug("Removing tracer...");
                         deleteTracer(uiTable.TracerInstance)
                     end
-        
+
                     local tracerTable = getTracerTable(uiTable);
                     if tracerTable ~= nil then
                         Library.Debug("Removing tracer (#2)...");
                         deleteTracer(tracerTable.TracerInstance)
                     end
-        
+
                     Library.Debug("Tracer deleted!");
                 else
                     if uiTable.TracerInstance ~= nil then
@@ -440,7 +440,7 @@ Library.Folders.GUI.IgnoreGuiInset = true;
 -- // ESP Templates // --
 local Templates = {
     Billboard = {
-        Name = "Instance", 
+        Name = "Instance",
         Model = nil,
         Visible = true,
         MaxDistance = 5000,
@@ -484,7 +484,7 @@ local Templates = {
     },
 
     Highlight = {
-        Name = "Instance", 
+        Name = "Instance",
         Model = nil,
         Visible = true,
         MaxDistance = 5000,
@@ -502,7 +502,7 @@ local Templates = {
     },
 
     Adornment = {
-        Name = "Instance", 
+        Name = "Instance",
         Model = nil,
         Visible = true,
         MaxDistance = 5000,
@@ -519,7 +519,7 @@ local Templates = {
     },
 
     Outline = {
-        Name = "Instance", 
+        Name = "Instance",
         Model = nil,
         Visible = true,
         MaxDistance = 5000,
@@ -562,10 +562,10 @@ function Library.ESP.Clear()
         if typeof(uiTable) ~= "table" then continue; end
 
         Library.Debug("Clearing '" .. tostring(_) .. "' ESP...")
-        for _, uiElement in pairs(uiTable) do 
+        for _, uiElement in pairs(uiTable) do
             if not uiElement then continue; end
             -- task.spawn(function()
-            if typeof(uiElement) == "table" and typeof(uiElement.Destroy) == "function" then 
+            if typeof(uiElement) == "table" and typeof(uiElement.Destroy) == "function" then
                 local success, errorMessage = pcall(function()
                     uiElement.Destroy()
                 end);
@@ -602,7 +602,7 @@ function Library.ESP.Billboard(args)
         ResetOnSpawn = false,
         Enabled = true,
         AlwaysOnTop = true,
-                                    
+
         Size = UDim2.new(0, 200, 0, 50),
         StudsOffset = args.StudsOffset,
 
@@ -643,7 +643,7 @@ function Library.ESP.Billboard(args)
 
         Settings = args,
         UIElements = {
-            GUI, 
+            GUI,
             Text
         },
         TracerInstance = nil
@@ -678,7 +678,7 @@ function Library.ESP.Billboard(args)
 
         Text.TextColor3 = _Color;
         Text.TextSize = _TextSize
-        
+
         if updateVariables ~= false then
             BillboardTable.Settings.Color = _Color;
             BillboardTable.Settings.TextSize = _TextSize;
@@ -765,14 +765,14 @@ function Library.ESP.Arrow(args)
     ArrowTable.Destroy = createDeleteFunction(TableName, TableIndex, ArrowTable);
     ArrowTable.OnDestroy = args.OnDestroy;
     --ArrowTable.Delete = ArrowTable.Destroy;
-    
+
     ArrowTable.Update = function(args, updateVariables)
         if ArrowTable.Deleted or not Arrow then return; end
         args = Library.Validate(args, ArrowTable.Settings);
 
-        local _Color = if typeof(args.Color) == "Color3" then args.Color else ArrowTable.Settings.Color;                         
-        Arrow.ImageColor3 = _Color;                      
-        
+        local _Color = if typeof(args.Color) == "Color3" then args.Color else ArrowTable.Settings.Color;
+        Arrow.ImageColor3 = _Color;
+
         if updateVariables ~= false then
             ArrowTable.Settings.Color = _Color;
             ArrowTable.Settings.CenterOffset = if typeof(args.CenterOffset) == "number" then args.CenterOffset else ArrowTable.Settings.CenterOffset;
@@ -849,7 +849,7 @@ function Library.ESP.Tracer(args)
         Settings = args,
         TracerInstance = TracerInstance,
         IsNormalTracer = true
-    }; 
+    };
 
     TracerTable.Connections = {
         Library.Connections.Add(args.Model.AncestryChanged:Connect(function(_, parent)
@@ -880,7 +880,7 @@ function Library.ESP.Tracer(args)
         TracerTable.TracerInstance.Thickness = _Thickness
         TracerTable.TracerInstance.Transparency = _Transparency;
         TracerTable.TracerInstance.Visible = _Visible;
-        
+
         if updateVariables ~= false then
             TracerTable.Settings.Color         = _Color;
             TracerTable.Settings.Thickness     = _Thickness;
@@ -906,18 +906,18 @@ end
 function Library.ESP.Highlight(args)
     assert(typeof(args) == "table", "args must be a table.");
     args = Library.Validate(args, Templates.Highlight)
-    
+
     -- // Tracer // --
-    do 
-        args.Tracer = Library.Validate(args.Tracer, Templates.Tracer); 
-        args.Tracer.Enabled = typeof(args.Tracer.Enabled) ~= "boolean" and false or args.Tracer.Enabled; 
+    do
+        args.Tracer = Library.Validate(args.Tracer, Templates.Tracer);
+        args.Tracer.Enabled = typeof(args.Tracer.Enabled) ~= "boolean" and false or args.Tracer.Enabled;
         args.Tracer.Model = args.Model;
     end
 
     -- // Arrow // --
-    do 
-        args.Arrow = Library.Validate(args.Arrow, Templates.Arrow); 
-        args.Arrow.Enabled = typeof(args.Arrow.Enabled) ~= "boolean" and false or args.Arrow.Enabled; 
+    do
+        args.Arrow = Library.Validate(args.Arrow, Templates.Arrow);
+        args.Arrow.Enabled = typeof(args.Arrow.Enabled) ~= "boolean" and false or args.Arrow.Enabled;
         args.Arrow.Model = args.Model;
     end
 
@@ -925,7 +925,7 @@ function Library.ESP.Highlight(args)
 
     Library.Debug("Creating Highlight '" .. tostring(args.Name) .. "'...")
     local BillboardTable = Library.ESP.Billboard({
-        Name = args.Name, 
+        Name = args.Name,
         Model = args.Model,
         MaxDistance = args.MaxDistance,
         StudsOffset = args.StudsOffset,
@@ -948,7 +948,7 @@ function Library.ESP.Highlight(args)
     local TableName = "Highlights";
     local TableIndex = randomString();
 
-    local HighlightTable = { 
+    local HighlightTable = {
         TableIndex = TableIndex, TableName = TableName,
 
         Settings = args,
@@ -956,7 +956,7 @@ function Library.ESP.Highlight(args)
         TracerInstance = args.Tracer.Enabled == true and Library.ESP.Tracer(args.Tracer) or nil,
         BillboardInstance = BillboardTable,
         ArrowInstance = args.Arrow.Enabled == true and Library.ESP.Arrow(args.Arrow) or nil
-    }; 
+    };
     HighlightTable.Connections = {
         Library.Connections.Add(args.Model.AncestryChanged:Connect(function(_, parent)
             if not parent then
@@ -975,13 +975,13 @@ function Library.ESP.Highlight(args)
 
     HighlightTable.Update = function(args, updateVariables)
         if HighlightTable.Deleted or (not Highlight and not BillboardTable) then return; end
-    
-        if HighlightTable.TracerInstance ~= nil and typeof(args.Tracer) == "table" then 
-            HighlightTable.TracerInstance.Update(args.Tracer, updateVariables); 
+
+        if HighlightTable.TracerInstance ~= nil and typeof(args.Tracer) == "table" then
+            HighlightTable.TracerInstance.Update(args.Tracer, updateVariables);
         end;
 
-        if HighlightTable.ArrowInstance ~= nil and typeof(args.Arrow) == "table" then 
-            HighlightTable.ArrowInstance.Update(args.Arrow, updateVariables); 
+        if HighlightTable.ArrowInstance ~= nil and typeof(args.Arrow) == "table" then
+            HighlightTable.ArrowInstance.Update(args.Arrow, updateVariables);
         end;
 
         local settings = HighlightTable.Settings; HighlightTable.Settings.Tracer = nil;
@@ -1041,18 +1041,18 @@ end
 function Library.ESP.Adornment(args)
     assert(typeof(args) == "table", "args must be a table.")
     args = Library.Validate(args, Templates.Adornment);
-    
+
     -- // Tracer // --
-    do 
-        args.Tracer = Library.Validate(args.Tracer, Templates.Tracer); 
-        args.Tracer.Enabled = typeof(args.Tracer.Enabled) ~= "boolean" and false or args.Tracer.Enabled; 
+    do
+        args.Tracer = Library.Validate(args.Tracer, Templates.Tracer);
+        args.Tracer.Enabled = typeof(args.Tracer.Enabled) ~= "boolean" and false or args.Tracer.Enabled;
         args.Tracer.Model = args.Model;
     end
 
     -- // Arrow // --
-    do 
-        args.Arrow = Library.Validate(args.Arrow, Templates.Arrow); 
-        args.Arrow.Enabled = typeof(args.Arrow.Enabled) ~= "boolean" and false or args.Arrow.Enabled; 
+    do
+        args.Arrow = Library.Validate(args.Arrow, Templates.Arrow);
+        args.Arrow.Enabled = typeof(args.Arrow.Enabled) ~= "boolean" and false or args.Arrow.Enabled;
         args.Arrow.Model = args.Model;
     end
 
@@ -1062,7 +1062,7 @@ function Library.ESP.Adornment(args)
 
     Library.Debug("Creating Adornment '" .. tostring(args.Name) .. "'...")
     local BillboardTable = Library.ESP.Billboard({
-        Name = args.Name, 
+        Name = args.Name,
         Model = args.Model,
         MaxDistance = args.MaxDistance,
         StudsOffset = args.StudsOffset,
@@ -1078,18 +1078,18 @@ function Library.ESP.Adornment(args)
     end
 
     local Adornment; do
-        if args.Type == "sphere" then 
+        if args.Type == "sphere" then
             Adornment = createInstance("SphereHandleAdornment", {
                 Radius = ModelSize.X * 1.085,
                 CFrame = CFrame.new() * CFrame.Angles(math.rad(90), 0, 0)
             });
-        elseif args.Type == "cylinder" then 
+        elseif args.Type == "cylinder" then
             Adornment = createInstance("CylinderHandleAdornment", {
                 Height = ModelSize.Y * 2,
                 Radius = ModelSize.X * 1.085,
                 CFrame = CFrame.new() * CFrame.Angles(math.rad(90), 0, 0)
             });
-        else 
+        else
             Adornment = createInstance("BoxHandleAdornment", {
                 Size = ModelSize
             });
@@ -1134,12 +1134,12 @@ function Library.ESP.Adornment(args)
     AdornmentTable.Update = function(args, updateVariables)
         if AdornmentTable.Deleted or (not Adornment and not BillboardTable) then return; end
 
-        if AdornmentTable.TracerInstance ~= nil and typeof(args.Tracer) == "table" then 
-            AdornmentTable.TracerInstance.Update(args.Tracer, updateVariables); 
+        if AdornmentTable.TracerInstance ~= nil and typeof(args.Tracer) == "table" then
+            AdornmentTable.TracerInstance.Update(args.Tracer, updateVariables);
         end;
 
-        if AdornmentTable.ArrowInstance ~= nil and typeof(args.Arrow) == "table" then 
-            AdornmentTable.ArrowInstance.Update(args.Arrow, updateVariables); 
+        if AdornmentTable.ArrowInstance ~= nil and typeof(args.Arrow) == "table" then
+            AdornmentTable.ArrowInstance.Update(args.Arrow, updateVariables);
         end;
 
         local settings = AdornmentTable.Settings; AdornmentTable.Settings.Tracer = nil;
@@ -1186,18 +1186,18 @@ end
 function Library.ESP.Outline(args)
     assert(typeof(args) == "table", "args must be a table.")
     args = Library.Validate(args, Templates.Outline);
-    
+
     -- // Tracer // --
-    do 
-        args.Tracer = Library.Validate(args.Tracer, Templates.Tracer); 
-        args.Tracer.Enabled = typeof(args.Tracer.Enabled) ~= "boolean" and false or args.Tracer.Enabled; 
+    do
+        args.Tracer = Library.Validate(args.Tracer, Templates.Tracer);
+        args.Tracer.Enabled = typeof(args.Tracer.Enabled) ~= "boolean" and false or args.Tracer.Enabled;
         args.Tracer.Model = args.Model;
     end
 
     -- // Arrow // --
-    do 
-        args.Arrow = Library.Validate(args.Arrow, Templates.Arrow); 
-        args.Arrow.Enabled = typeof(args.Arrow.Enabled) ~= "boolean" and false or args.Arrow.Enabled; 
+    do
+        args.Arrow = Library.Validate(args.Arrow, Templates.Arrow);
+        args.Arrow.Enabled = typeof(args.Arrow.Enabled) ~= "boolean" and false or args.Arrow.Enabled;
         args.Arrow.Model = args.Model;
     end
 
@@ -1205,7 +1205,7 @@ function Library.ESP.Outline(args)
 
     Library.Debug("Creating Outline '" .. tostring(args.Name) .. "'...")
     local BillboardTable = Library.ESP.Billboard({
-        Name = args.Name, 
+        Name = args.Name,
         Model = args.Model,
         MaxDistance = args.MaxDistance,
         StudsOffset = args.StudsOffset,
@@ -1256,12 +1256,12 @@ function Library.ESP.Outline(args)
     OutlineTable.Update = function(args, updateVariables)
         if OutlineTable.Deleted or (not Outline and not BillboardTable) then return; end
 
-        if OutlineTable.TracerInstance ~= nil and typeof(args.Tracer) == "table" then 
-            OutlineTable.TracerInstance.Update(args.Tracer, updateVariables); 
+        if OutlineTable.TracerInstance ~= nil and typeof(args.Tracer) == "table" then
+            OutlineTable.TracerInstance.Update(args.Tracer, updateVariables);
         end;
 
-        if OutlineTable.ArrowInstance ~= nil and typeof(args.Arrow) == "table" then 
-            OutlineTable.ArrowInstance.Update(args.Arrow, updateVariables); 
+        if OutlineTable.ArrowInstance ~= nil and typeof(args.Arrow) == "table" then
+            OutlineTable.ArrowInstance.Update(args.Arrow, updateVariables);
         end;
 
         local settings = OutlineTable.Settings; OutlineTable.Settings.Tracer = nil;
@@ -1293,7 +1293,7 @@ function Library.ESP.Outline(args)
 
     OutlineTable.SetText = function(text)
         if OutlineTable.Deleted or not BillboardTable then return; end
-    
+
         OutlineTable.Settings.Name = (typeof(text) == "string" and text or OutlineTable.Settings.Name);
         BillboardTable.SetText(OutlineTable.Settings.Name);
     end
@@ -1330,7 +1330,7 @@ end), "RainbowStepped", true);
 local function checkUI(uiTable, TableName, TableIndex)
     if uiTable == nil and true or (
         typeof(uiTable) == "table" and uiTable.Deleted == true
-    ) then 
+    ) then
         if uiTable then
             if typeof(uiTable.Destroy) == "function" then uiTable.Destroy(); end
             Library.ESP[uiTable.TableName][uiTable.TableIndex] = nil;
@@ -1354,7 +1354,7 @@ local function checkVisibility(ui, root, skipOnScreen)
            ui.Hidden = true;
            ui.SetVisible(false);
        end
-    
+
        return pos, onScreen, false;
     end
 
@@ -1369,7 +1369,7 @@ local function checkVisibility(ui, root, skipOnScreen)
 
     return pos, onScreen, true;
 end
-                                                                                                            
+
 
 
 Library.Connections.Add(workspace:GetPropertyChangedSignal("CurrentCamera"):Connect(function()
@@ -1380,12 +1380,12 @@ Library.Connections.Add(localPlayer.CharacterAdded:Connect(function(newCharacter
     character = newCharacter;
     rootPart = character:WaitForChild("HumanoidRootPart", 5);
 end), "CharacterUpdate", true);
-                
+
 Library.Connections.Add(RunService.RenderStepped:Connect(function(dt)
     if not (character and rootPart and camera) then return; end;
 
     -- // Update Tracers // --
-    for _, tracerTable in pairs(Library.ESP.Tracers) do 
+    for _, tracerTable in pairs(Library.ESP.Tracers) do
         if not checkUI(tracerTable, "Tracers", tracerTable.TableIndex) then continue; end
 
         if tracerTable.Deleted ~= true and tracerTable.TracerDeleted ~= true and tracerTable.TracerInstance ~= nil then
@@ -1417,56 +1417,57 @@ Library.Connections.Add(RunService.RenderStepped:Connect(function(dt)
                 end;
             end;
         end;
-    end;        
-    
+    end;
+
     -- // Update Arrows // --
-    for _, arrowTable in pairs(Library.ESP.Arrows) do 
+    for _, arrowTable in pairs(Library.ESP.Arrows) do
         if not checkUI(arrowTable, "Arrows", arrowTable.TableIndex) then continue; end
         if not (Library.Arrows.Enabled == true and arrowTable.Settings.Visible == true) then arrowTable.ArrowInstance.Visible = false; continue; end
-                                                                                                                                                
+
         local pos, onScreen, canContinue = checkVisibility(arrowTable, arrowTable.Settings.Model, true);
         if onScreen then arrowTable.ArrowInstance.Visible = false; continue; end
-                                                                                                            
+
         local screenSize = camera.ViewportSize;
         local centerPos = Vector2.new(screenSize.X / 2, screenSize.Y/2);
-                                                                                                                                    
+
         -- use aspect to make oval circle (it's more accurate)
         -- local aspectRatioX = screenSize.X / screenSize.Y;
         -- local aspectRatioY = screenSize.Y / screenSize.X;
         local arrowPosPixel = Vector2.new(arrowTable.ArrowInstance.Position.X.Scale, arrowTable.ArrowInstance.Position.Y.Scale) * 1000;
         local partPos = Vector2.new(pos.X, pos.Y);
-     
+
         local IsInverted = pos.Z <= 0;
         local invert = (IsInverted and -1 or 1);
-            
+
         local direction = (partPos - centerPos);
         local arctan = math.atan2(direction.Y, direction.X);
         local angle = math.deg(arctan) + 90;
         local distance = (arrowTable.Settings.CenterOffset * 0.001) * screenSize.Y;
-     
+
         arrowTable.UpdateArrow(
-            angle + 180 * (IsInverted and 0 or 1), 
+            angle + 180 * (IsInverted and 0 or 1),
             UDim2.new(
-                0, centerPos.X + (distance * math.cos(arctan) * invert), 
+                0, centerPos.X + (distance * math.cos(arctan) * invert),
                 0, centerPos.Y + (distance * math.sin(arctan) * invert)
             )
         );
         arrowTable.ArrowInstance.Visible = (onScreen == false);
-        
+
         arrowTable.Update({ Color = Library.Rainbow.Enabled and Library.Rainbow.Color or arrowTable.Settings.Color }, false);
-    end;  
-                                                                                                                                       
+    end;
+
     for uiName, uiTable in pairs(Library.ESP) do
         if typeof(uiTable) ~= "table" or uiName == "Tracers" or uiName == "Arrows" then continue; end
-         
+
         for _, ui in pairs(uiTable) do
             if not checkUI(ui, uiName, ui.TableIndex) then continue; end
-                                                                                                                                                 
+
             local pos, onScreen, canContinue = checkVisibility(ui, ui.Settings.Model);
             if not canContinue then continue; end
-            
+
             local isVisible = (Library[uiName] == nil and true or Library[uiName].Enabled);
             if isVisible == ui.Hidden then ui.Hidden = not isVisible; ui.SetVisible(isVisible); end
+            if not isVisible then continue; end
 
             if uiName == "Billboards" then
                 ui.SetDistanceText(ui.GetDistance());
@@ -1475,20 +1476,20 @@ Library.Connections.Add(RunService.RenderStepped:Connect(function(dt)
                     ui.Update({ Color = Library.Rainbow.Enabled and Library.Rainbow.Color or ui.Settings.Color }, false);
                 end
             elseif uiName == "Adornments" then
-                ui.Update({ 
-                    Color        = Library.Rainbow.Enabled and Library.Rainbow.Color or ui.Settings.Color, 
+                ui.Update({
+                    Color        = Library.Rainbow.Enabled and Library.Rainbow.Color or ui.Settings.Color,
                     TextColor    = Library.Rainbow.Enabled and Library.Rainbow.Color or ui.Settings.TextColor
                 }, false);
             elseif uiName == "Highlights" then
-                ui.Update({ 
-                    FillColor    = Library.Rainbow.Enabled and Library.Rainbow.Color or ui.Settings.FillColor, 
-                    OutlineColor = Library.Rainbow.Enabled and Library.Rainbow.Color or ui.Settings.OutlineColor, 
+                ui.Update({
+                    FillColor    = Library.Rainbow.Enabled and Library.Rainbow.Color or ui.Settings.FillColor,
+                    OutlineColor = Library.Rainbow.Enabled and Library.Rainbow.Color or ui.Settings.OutlineColor,
                     TextColor    = Library.Rainbow.Enabled and Library.Rainbow.Color or ui.Settings.TextColor
                 }, false);
             elseif uiName == "Outlines" then
-                ui.Update({ 
-                    SurfaceColor = Library.Rainbow.Enabled and Library.Rainbow.Color or ui.Settings.SurfaceColor, 
-                    OutlineColor = Library.Rainbow.Enabled and Library.Rainbow.Color or ui.Settings.OutlineColor, 
+                ui.Update({
+                    SurfaceColor = Library.Rainbow.Enabled and Library.Rainbow.Color or ui.Settings.SurfaceColor,
+                    OutlineColor = Library.Rainbow.Enabled and Library.Rainbow.Color or ui.Settings.OutlineColor,
                     TextColor    = Library.Rainbow.Enabled and Library.Rainbow.Color or ui.Settings.TextColor
                 }, false);
             end;
