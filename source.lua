@@ -49,11 +49,11 @@ local Library = {
     -- // Storage // --
     ESP = {
         Billboards = {},
-        Arrows = {},
-
         Adornments = {},
         Highlights = {},
         Outlines = {},
+
+        Arrows = {},
         Tracers = {}
     },
 
@@ -88,44 +88,97 @@ function Library.Connections.Remove(key)
     end
 end;
 
+--// Global Toggles \\--
+Library.Adornments = {
+    Enabled = true,
+
+    Set = function(bool) 
+        if typeof(bool) == "boolean" then
+            Library.Adornments.Enabled = bool;
+        end; 
+    end,
+    Enable = function() Library.Adornments.Enabled = true; end,
+    Disable = function() Library.Adornments.Enabled = false; end,
+    Toggle = function() Library.Adornments.Enabled = not Library.Adornments.Enabled; end
+};
+
+Library.Billboards = {
+    Enabled = true,
+
+    Set = function(bool) 
+        if typeof(bool) == "boolean" then
+            Library.Billboards.Enabled = bool;
+        end; 
+    end,
+    Enable = function() Library.Billboards.Enabled = true; end,
+    Disable = function() Library.Billboards.Enabled = false; end,
+    Toggle = function() Library.Billboards.Enabled = not Library.Billboards.Enabled; end
+};
+
+Library.Highlights = {
+    Enabled = true,
+
+    Set = function(bool) 
+        if typeof(bool) == "boolean" then
+            Library.Highlights.Enabled = bool;
+        end; 
+    end,
+    Enable = function() Library.Highlights.Enabled = true; end,
+    Disable = function() Library.Highlights.Enabled = false; end,
+    Toggle = function() Library.Highlights.Enabled = not Library.Highlights.Enabled; end
+};
+
+Library.Outlines = {
+    Enabled = true,
+
+    Set = function(bool) 
+        if typeof(bool) == "boolean" then
+            Library.Outlines.Enabled = bool;
+        end; 
+    end,
+    Enable = function() Library.Outlines.Enabled = true; end,
+    Disable = function() Library.Outlines.Enabled = false; end,
+    Toggle = function() Library.Outlines.Enabled = not Library.Outlines.Enabled; end
+};
+
 Library.Distance = {
     Enabled = true,
 
     Set = function(bool) 
-        if (bool == true or bool == false) then
+        if typeof(bool) == "boolean" then
             Library.Distance.Enabled = bool;
         end; 
     end,
     Enable = function() Library.Distance.Enabled = true; end,
     Disable = function() Library.Distance.Enabled = false; end,
-    Toggle = function() Library.Distance.Enabled = not Library.Enabled; end
-}
+    Toggle = function() Library.Distance.Enabled = not Library.Distance.Enabled; end
+};
 
 Library.Tracers = {
     Enabled = true,
 
     Set = function(bool) 
-        if (bool == true or bool == false) then
+        if typeof(bool) == "boolean" then
             Library.Tracers.Enabled = bool;
         end; 
     end,
     Enable = function() Library.Tracers.Enabled = true; end,
     Disable = function() Library.Tracers.Enabled = false; end,
-    Toggle = function() Library.Tracers.Enabled = not Library.Enabled; end
-}
+    Toggle = function() Library.Tracers.Enabled = not Library.Tracers.Enabled; end
+};
 
 Library.Arrows = {
     Enabled = true,
 
     Set = function(bool) 
-        if (bool == true or bool == false) then
+        if typeof(bool) == "boolean" then
             Library.Arrows.Enabled = bool;
         end; 
     end,
     Enable = function() Library.Arrows.Enabled = true; end,
     Disable = function() Library.Arrows.Enabled = false; end,
-    Toggle = function() Library.Arrows.Enabled = not Library.Enabled; end
-}
+    Toggle = function() Library.Arrows.Enabled = not Library.Arrows.Enabled; end
+};
 
 Library.Rainbow = {
     HueSetup = 0, Hue = 0, Step = 0,
@@ -133,13 +186,13 @@ Library.Rainbow = {
     Enabled = false,
 
     Set = function(bool) 
-        if (bool == true or bool == false) then
+        if typeof(bool) == "boolean" then
             Library.Rainbow.Enabled = bool;
         end; 
     end,
     Enable = function() Library.Rainbow.Enabled = true; end,
     Disable = function() Library.Rainbow.Enabled = false; end,
-    Toggle = function() Library.Rainbow.Enabled = not Library.Enabled; end
+    Toggle = function() Library.Rainbow.Enabled = not Library.Rainbow.Enabled; end
 };
 
 -- // Services // --
@@ -1408,11 +1461,13 @@ Library.Connections.Add(RunService.RenderStepped:Connect(function(dt)
          
         for _, ui in pairs(uiTable) do
             if not checkUI(ui, uiName, ui.TableIndex) then continue; end
-                                                                                                                                                         
+                                                                                                                                                 
             local pos, onScreen, canContinue = checkVisibility(ui, ui.Settings.Model);
-            if not canContinue then continue end
-            if ui.Hidden == true then ui.Hidden = nil; ui.SetVisible(true); end
+            if not canContinue then continue; end
             
+            local isVisible = (Library[uiName] == nil and true or Library[uiName].Enabled);
+            if isVisible == ui.Hidden then ui.Hidden = not isVisible; ui.SetVisible(isVisible); end
+
             if uiName == "Billboards" then
                 ui.SetDistanceText(ui.GetDistance());
 
