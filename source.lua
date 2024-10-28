@@ -450,6 +450,7 @@ local Templates = {
         Color = Color3.new(),
         WasCreatedWithDifferentESP = false,
 
+        Hidden = false,
         OnDestroy = nil,
     },
 
@@ -463,6 +464,7 @@ local Templates = {
         WasCreatedWithDifferentESP = false,
 
         FlipOnScreenCheck = false,
+        Hidden = false,
         OnDestroy = nil,
     },
 
@@ -480,6 +482,7 @@ local Templates = {
         Thickness = 2,
         Transparency = 0.65,
 
+        Hidden = false,
         OnDestroy = nil,
     },
 
@@ -498,6 +501,7 @@ local Templates = {
         FillTransparency = 0.65,
         OutlineTransparency = 0,
 
+        Hidden = false,
         OnDestroy = nil,
     },
 
@@ -515,6 +519,7 @@ local Templates = {
         Transparency = 0.65,
         Type = "Box", -- // Box, Cylinder, Sphere // --
 
+        Hidden = false,
         OnDestroy = nil,
     },
 
@@ -533,6 +538,7 @@ local Templates = {
         Thickness = 0.04, -- 2
         Transparency = 0.65,
 
+        Hidden = false,
         OnDestroy = nil,
     }
 }
@@ -658,6 +664,7 @@ function Library.ESP.Billboard(args)
     };
 
     -- // Delete Handler // --
+    BillboardTable.Hidden = args.Hidden;
     BillboardTable.Deleted = false;
     BillboardTable.Destroy = createDeleteFunction(TableName, TableIndex, BillboardTable);
     BillboardTable.OnDestroy = args.OnDestroy;
@@ -761,6 +768,7 @@ function Library.ESP.Arrow(args)
     };
 
     -- // Delete Handler // --
+    ArrowTable.Hidden = args.Hidden;
     ArrowTable.Deleted = false;
     ArrowTable.Destroy = createDeleteFunction(TableName, TableIndex, ArrowTable);
     ArrowTable.OnDestroy = args.OnDestroy;
@@ -860,6 +868,7 @@ function Library.ESP.Tracer(args)
     };
 
     -- // Delete Handler // --
+    TracerTable.Hidden = args.Hidden;
     TracerTable.Deleted = false;
     TracerTable.Destroy = createDeleteFunction(TableName, TableIndex, TracerTable);
     TracerTable.OnDestroy = args.OnDestroy;
@@ -966,6 +975,7 @@ function Library.ESP.Highlight(args)
     };
 
     -- // Delete Handler // --
+    HighlightTable.Hidden = args.Hidden;
     HighlightTable.Deleted = false;
     HighlightTable.Destroy = createDeleteFunction(TableName, TableIndex, HighlightTable);
     HighlightTable.OnDestroy = args.OnDestroy;
@@ -1124,6 +1134,7 @@ function Library.ESP.Adornment(args)
     };
 
     -- // Delete Handler // --
+    AdornmentTable.Hidden = args.Hidden;
     AdornmentTable.Deleted = false;
     AdornmentTable.Destroy = createDeleteFunction(TableName, TableIndex, AdornmentTable);
     AdornmentTable.OnDestroy = args.OnDestroy;
@@ -1231,7 +1242,7 @@ function Library.ESP.Outline(args)
         TableIndex = TableIndex, TableName = TableName,
 
         Settings = args,
-        UIElements = { Adornment },
+        UIElements = { Outline },
         TracerInstance = args.Tracer.Enabled == true and Library.ESP.Tracer(args.Tracer) or nil,
         BillboardInstance = BillboardTable,
         ArrowInstance = args.Arrow.Enabled == true and Library.ESP.Arrow(args.Arrow) or nil
@@ -1246,6 +1257,7 @@ function Library.ESP.Outline(args)
     };
 
     -- // Delete Handler // --
+    OutlineTable.Hidden = args.Hidden;
     OutlineTable.Deleted = false;
     OutlineTable.Destroy = createDeleteFunction(TableName, TableIndex, OutlineTable);
     OutlineTable.OnDestroy = args.OnDestroy;
@@ -1300,7 +1312,7 @@ function Library.ESP.Outline(args)
     OutlineTable.SetDistanceText = BillboardTable.SetDistanceText;
 
     OutlineTable.SetVisible = function(visible, tracer)
-        if OutlineTable.Deleted or not Highlight then return; end
+        if OutlineTable.Deleted or not Outline then return; end
 
         OutlineTable.Settings.Visible = if typeof(visible) == "boolean" then visible else OutlineTable.Settings.Visible;
         Outline.Adornee = OutlineTable.Settings.Visible and OutlineTable.Settings.Model or nil;
