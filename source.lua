@@ -660,6 +660,10 @@ function Library.ESP.Billboard(args)
             if not parent then
                 BillboardTable.Destroy();
             end
+        end)),
+
+        Library.Connections.Add(args.Model.Destroying:Connect(function()
+            BillboardTable.Destroy();
         end))
     };
 
@@ -764,6 +768,10 @@ function Library.ESP.Arrow(args)
             if not parent then
                 ArrowTable.Destroy();
             end
+        end)),
+
+        Library.Connections.Add(args.Model.Destroying:Connect(function()
+            ArrowTable.Destroy();
         end))
     };
 
@@ -864,6 +872,10 @@ function Library.ESP.Tracer(args)
             if not parent then
                 TracerTable.Destroy();
             end
+        end)),
+
+        Library.Connections.Add(args.Model.Destroying:Connect(function()
+            TracerTable.Destroy();
         end))
     };
 
@@ -971,6 +983,10 @@ function Library.ESP.Highlight(args)
             if not parent then
                 HighlightTable.Destroy();
             end
+        end)),
+
+        Library.Connections.Add(args.Model.Destroying:Connect(function()
+            HighlightTable.Destroy();
         end))
     };
 
@@ -1130,6 +1146,10 @@ function Library.ESP.Adornment(args)
             if not parent then
                 AdornmentTable.Destroy();
             end
+        end)),
+
+        Library.Connections.Add(args.Model.Destroying:Connect(function()
+            AdornmentTable.Destroy();
         end))
     };
 
@@ -1253,6 +1273,10 @@ function Library.ESP.Outline(args)
             if not parent then
                 OutlineTable.Destroy();
             end
+        end)),
+
+        Library.Connections.Add(args.Model.Destroying:Connect(function()
+            OutlineTable.Destroy();
         end))
     };
 
