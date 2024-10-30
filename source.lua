@@ -442,6 +442,7 @@ local Templates = {
     Billboard = {
         Name = "Instance",
         Model = nil,
+        TextModel = nil,
         Visible = true,
         MaxDistance = 5000,
         StudsOffset = Vector3.new(),
@@ -489,6 +490,8 @@ local Templates = {
     Highlight = {
         Name = "Instance",
         Model = nil,
+        TextModel = nil,
+
         Visible = true,
         MaxDistance = 5000,
         StudsOffset = Vector3.new(),
@@ -508,6 +511,8 @@ local Templates = {
     Adornment = {
         Name = "Instance",
         Model = nil,
+        TextModel = nil,
+
         Visible = true,
         MaxDistance = 5000,
         StudsOffset = Vector3.new(),
@@ -526,6 +531,8 @@ local Templates = {
     Outline = {
         Name = "Instance",
         Model = nil,
+        TextModel = nil,
+
         Visible = true,
         MaxDistance = 5000,
         StudsOffset = Vector3.new(),
@@ -612,7 +619,7 @@ function Library.ESP.Billboard(args)
         Size = UDim2.new(0, 200, 0, 50),
         StudsOffset = args.StudsOffset,
 
-        Adornee = args.Model
+        Adornee = typeof(args.TextModel) == "Instance" and args.TextModel or args.Model
     });
 
     local Text = createInstance("TextLabel", {
@@ -948,9 +955,12 @@ function Library.ESP.Highlight(args)
     local BillboardTable = Library.ESP.Billboard({
         Name = args.Name,
         Model = args.Model,
+        TextModel = typeof(args.TextModel) == "Instance" and args.TextModel or nil,
+
         MaxDistance = args.MaxDistance,
         StudsOffset = args.StudsOffset,
         Color = args.TextColor,
+
         WasCreatedWithDifferentESP = true
     });
 
@@ -1090,9 +1100,12 @@ function Library.ESP.Adornment(args)
     local BillboardTable = Library.ESP.Billboard({
         Name = args.Name,
         Model = args.Model,
+        TextModel = typeof(args.TextModel) == "Instance" and args.TextModel or nil,
+
         MaxDistance = args.MaxDistance,
         StudsOffset = args.StudsOffset,
         Color = args.TextColor,
+
         WasCreatedWithDifferentESP = true
     });
 
@@ -1238,9 +1251,12 @@ function Library.ESP.Outline(args)
     local BillboardTable = Library.ESP.Billboard({
         Name = args.Name,
         Model = args.Model,
+        TextModel = typeof(args.TextModel) == "Instance" and args.TextModel or nil,
+        
         MaxDistance = args.MaxDistance,
         StudsOffset = args.StudsOffset,
         Color = args.TextColor,
+
         WasCreatedWithDifferentESP = true
     });
 
