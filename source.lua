@@ -605,6 +605,7 @@ function Library.ESP.Billboard(args)
     assert(typeof(args) == "table", "args must be a table.");
     args = Library.Validate(args, Templates.Billboard);
     assert(typeof(args.Model) == "Instance", "args.Model must be an Instance.");
+    args.TextModel = typeof(args.TextModel) == "Instance" and args.TextModel or args.Model;
 
     Library.Debug("Creating Billboard '" .. tostring(args.Name) .. "'...")
     -- // Instances // --
@@ -619,7 +620,7 @@ function Library.ESP.Billboard(args)
         Size = UDim2.new(0, 200, 0, 50),
         StudsOffset = args.StudsOffset,
 
-        Adornee = typeof(args.TextModel) == "Instance" and args.TextModel or args.Model
+        Adornee = args.TextModel
     });
 
     local Text = createInstance("TextLabel", {
@@ -697,7 +698,7 @@ function Library.ESP.Billboard(args)
 
         Text.TextColor3 = _Color;
         Text.TextSize = _TextSize;
-        GUI.Adornee = _TextModel;
+        GUI.Adornee = _TextModel or BillboardTable.Settings.Model;
 
         if updateVariables ~= false then
             BillboardTable.Settings.Color       = _Color;
