@@ -1106,5 +1106,5 @@ end), "CharacterUpdate", true);
 --// Return \\--
 getgenv().mstudio45 = getgenv().mstudio45 or { };
 getgenv().mstudio45.ESPLibrary = Library;
-Library.Print("Loaded!");
+Library.Print("Loaded! [TEST VERSION]");
 return Library
