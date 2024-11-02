@@ -709,7 +709,7 @@ function Library.ESP.Billboard(args)
     });
     createInstance("UIStroke", { Parent = Text });
 
-    local ESPTable = createESP(args, "Billboards", { GUI, Text }, function(ESPTable, newArgs, updateVariable);
+    local ESPTable = createESP(args, "Billboards", { GUI, Text }, function(ESPTable, newArgs, updateVariable)
         Text.Text       = newArgs.Name;
         Text.TextColor3 = newArgs.Color;
         Text.TextSize   = newArgs.TextSize;
@@ -1106,5 +1106,5 @@ end), "CharacterUpdate", true);
 --// Return \\--
 getgenv().mstudio45 = getgenv().mstudio45 or { };
 getgenv().mstudio45.ESPLibrary = Library;
-Library.Print("Loaded! [TEST VERSION]");
+Library.Print("Loaded! [TEST]");
 return Library
